@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('miles_driven');
             $table->date('from');
             $table->date('to');
-            $table->string('equipment_operated')->nullable();
+            $table->jsonb('equipment_operated')->nullable();
             $table->unsignedBigInteger('state_id');
             $table->timestamps();
         });

@@ -35,7 +35,7 @@ return new class extends Migration
             $table->boolean('sensitive_functions')->default(false);
             $table->boolean('motor_vehicle')->default(false);
             $table->string('type')->nullable();
-            $table->json('equipment_operated')->nullable();
+            $table->jsonb('equipment_operated')->nullable();
             $table->timestamps();
         });
     }

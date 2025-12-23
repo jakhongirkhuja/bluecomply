@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('driver_addresses', function (Blueprint $table) {
             $table->id();
-            $
             $table->unsignedBigInteger('driver_id');
             $table->string('address');
             $table->timestamp('move_in');
