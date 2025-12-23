@@ -21,6 +21,6 @@ class Application extends Model
 
     public function address()
     {
-        return $this->hasOne(UserAddress::class);
+        return $this->hasOne(DriverAddress::class);
     }
 }

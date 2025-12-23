@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('driving_experiences', function (Blueprint $table) {
+        Schema::create('endorsements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
             $table->unsignedBigInteger('driver_id');
-            $table->string('straight_truck');
-            $table->string('semi_trailer');
-            $table->string('two_trailers');
-            $table->string('other')->nullable();
-
+            $table->json('endorsements')->nullable();
+            $table->string('twic_card_path')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('temp_driving_experiences');
+        Schema::dropIfExists('endorsements');
     }
 };

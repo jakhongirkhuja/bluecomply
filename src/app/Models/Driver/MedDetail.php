@@ -4,7 +4,7 @@ namespace App\Models\Driver;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ContactInformation extends Model
+class MedDetail extends Model
 {
     //
 }

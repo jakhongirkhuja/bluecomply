@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('personal_information', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
+
             $table->unsignedBigInteger('driver_id');
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->string('ssn_sin')->unique();
+            $table->string('ssn_sin')->unique()->nullable();
             $table->date('date_of_birth');
-            $table->boolean('known_by_other_name')->default(false);
-            $table->string('other_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('email_confirm_token')->nullable();
+            $table->boolean('email_confirmed')->default(false);
             $table->timestamps();
         });
     }

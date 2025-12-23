@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_addresses', function (Blueprint $table) {
+        Schema::create('driver_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
+            $
             $table->unsignedBigInteger('driver_id');
-            $table->string('line1');
-            $table->string('line2')->nullable();
-            $table->unsignedBigInteger('city_id');
-            $table->unsignedBigInteger('state_id');
-            $table->string('zip');
-            $table->boolean('residence_over_3_years')->default(false);
+            $table->string('address');
+            $table->timestamp('move_in');
+            $table->timestamp('move_out')->nullable();
+            $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('state_id')->nullable();
+            $table->string('zip')->nullable();
+            $table->boolean('currently_live')->default(false);
             $table->timestamps();
         });
     }

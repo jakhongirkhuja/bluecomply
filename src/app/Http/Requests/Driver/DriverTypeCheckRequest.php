@@ -4,7 +4,7 @@ namespace App\Http\Requests\Driver;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DriverLoginConfirmRequest extends FormRequest
+class DriverTypeCheckRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class DriverLoginConfirmRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'primary_phone'=>'required|string|exists:drivers,primary_phone',
-            'rand_number'=>'required|numeric|exists:drivers,rand_number',
-            'company_token'=>'required|exists:registration_links,token',
+            'type'=>'required|in:information,address',
+            'driver_id'=>'required|exists:drivers,id',
         ];
     }
 }

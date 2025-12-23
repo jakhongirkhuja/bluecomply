@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('driver_signs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
+
             $table->unsignedBigInteger('driver_id');
             $table->string('sign_path')->nullable();
+            $table->boolean('checked')->default(true);
             $table->timestamps();
         });
     }

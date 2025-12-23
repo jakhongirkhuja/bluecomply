@@ -4,7 +4,7 @@ namespace App\Models\Driver;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserAddress extends Model
+class DriverAddress extends Model
 {
     //
 }

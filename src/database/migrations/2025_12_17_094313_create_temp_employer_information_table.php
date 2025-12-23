@@ -13,26 +13,29 @@ return new class extends Migration
     {
         Schema::create('employer_information', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
+
             $table->unsignedBigInteger('driver_id');
-            $table->boolean('employed')->default(false);
-            $table->string('company_name')->nullable();
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->unsignedBigInteger('country_id')->nullable();
-            $table->unsignedBigInteger('city_id')->nullable();
-            $table->unsignedBigInteger('state_id')->nullable();
-            $table->string('street_address')->nullable();
-            $table->string('zip_postal')->nullable();
-            $table->string('telephone')->nullable();
-            $table->string('position_held')->nullable();
+
+            $table->string('type_engagement')->default('job');
+            $table->string('name')->nullable();
+            $table->string('position')->nullable();
+            $table->string('address');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('current_employer')->default(true); // if current false , then reason for leaving must requried
             $table->text('reason_for_leaving')->nullable();
-            $table->boolean('terminated')->default(false);
-            $table->boolean('current_employer')->default(false);
+
+            $table->string('company_contact_name')->nullable();
+            $table->string('company_contact_phone')->nullable();
+            $table->string('company_contact_email')->nullable();
+            $table->boolean('company_contact_allow')->default(true);
+
+
             $table->boolean('safety_regulations')->default(false);
             $table->boolean('sensitive_functions')->default(false);
             $table->boolean('motor_vehicle')->default(false);
             $table->string('type')->nullable();
+            $table->json('equipment_operated')->nullable();
             $table->timestamps();
         });
     }

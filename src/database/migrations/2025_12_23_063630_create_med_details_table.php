@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('med_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('driver_id');
-            $table->boolean('submitted')->default(true);
-            $table->json('application_data')->nullable();
-            $table->text('confirmation_number')->nullable();
-            $table->timestamp('used_at')->nullable();
-            $table->ipAddress('used_ip')->nullable();
-
+            $table->date('med_issue_date')->nullable();
+            $table->date('med_expiration')->nullable();
+            $table->string('med_path')->nullable();
+            $table->boolean('current')->default(true);
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('temp_applications');
+        Schema::dropIfExists('med_details');
     }
 };

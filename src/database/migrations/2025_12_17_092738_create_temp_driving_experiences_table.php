@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
+        Schema::create('driving_experiences', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('driver_id');
-            $table->boolean('submitted')->default(true);
-            $table->json('application_data')->nullable();
-            $table->text('confirmation_number')->nullable();
-            $table->timestamp('used_at')->nullable();
-            $table->ipAddress('used_ip')->nullable();
 
+            $table->unsignedBigInteger('driver_id');
+
+            $table->unsignedTinyInteger('years_of_experience');
+            $table->unsignedBigInteger('miles_driven');
+            $table->date('from');
+            $table->date('to');
+            $table->string('equipment_operated')->nullable();
+            $table->unsignedBigInteger('state_id');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('temp_applications');
+        Schema::dropIfExists('temp_driving_experiences');
     }
 };
