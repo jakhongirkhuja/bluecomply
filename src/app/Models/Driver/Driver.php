@@ -20,7 +20,9 @@ class Driver extends Authenticatable
         'ssn_sin',
         'date_of_birth',
     ];
-
+    protected $hidden = [
+        'driver_temp_token','rand_number','phone_confirm_at','phone_confirm_sent','ssn_sin'
+    ];
     protected $casts = [
         'status' => 'boolean',
         'date_of_birth' => 'date',
@@ -30,6 +32,7 @@ class Driver extends Authenticatable
     {
         return $this->hasOne(PersonalInformation::class);
     }
+
     public function endorsement()
     {
         return $this->hasOne(Endorsement::class);
@@ -56,9 +59,26 @@ class Driver extends Authenticatable
     {
         return $this->hasMany(LicenseDetail::class);
     }
-    public function currentLicense()
+    public function license()
     {
         return $this->hasOne(LicenseDetail::class)->where('current', true);
     }
+    public function meds()
+    {
+        return $this->hasMany(MedDetail::class);
+    }
+    public function med(){
+        return $this->hasOne(MedDetail::class)->where('current', true);
+    }
+    public function drugTestes()
+    {
+        return $this->hasMany(DrugTest::class);
+    }
+    public function drugTest()
+    {
+        return $this->hasOne(DrugTest::class)->latestOfMany();
+    }
+
+
 
 }

@@ -119,9 +119,19 @@ class ApplicationService
         return DB::transaction(function () use ($personalInformation, $data, $driver) {
             if ($personalInformation) {
                 $personalInformation->update($data);
+                $driver->first_name = $data['first_name'];
+                $driver->middle_name = $data['middle_name'];
+                $driver->last_name = $data['last_name'];
+                $driver->date_of_birth = $data['date_of_birth'];
+                $driver->save();
             } else {
                 $data['driver_id'] = $driver->id;
                 $personalInformation = PersonalInformation::create($data);
+                $driver->first_name = $data['first_name'];
+                $driver->middle_name = $data['middle_name'];
+                $driver->last_name = $data['last_name'];
+                $driver->date_of_birth = $data['date_of_birth'];
+                $driver->save();
             }
             return response()->success($personalInformation, Response::HTTP_CREATED);
         });
