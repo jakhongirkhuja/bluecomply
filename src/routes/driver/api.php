@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\Driver\ApplicationController;
 use Illuminate\Support\Facades\Route;
-Route::prefix('v1')->prefix('driver')->group(function () {
+Route::prefix('v1/driver')->group(function () {
     Route::post('login', [ApplicationController::class, 'driverLogin']);
     Route::post('login/confirm', [ApplicationController::class, 'driverLoginConfirm']);
     Route::middleware(['auth:sanctum'])->prefix('cabinet')->group(function () {

@@ -9,8 +9,6 @@ class Endorsement extends Model
     protected $fillable = [
         'endorsements',
         'twic_card_path',
-    ];
-    protected $casts = [
-        'endorsements' => 'array',
+        'driver_id',
     ];
 }

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Driver;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Driver\ApplicationStatusTypeRequest;
+use App\Http\Requests\Driver\ApplicationTypeRequest;
 use App\Http\Requests\Driver\DriverLoginConfirmRequest;
 use App\Http\Requests\Driver\DriverLoginRequest;
+use App\Http\Requests\Driver\DriverTypeCheckRequest;
 use App\Models\Driver\Application;
 use App\Models\Driver\LicenseDetail;
 use App\Models\Driver\MedDetail;
@@ -17,17 +20,19 @@ class ApplicationController extends Controller
     public function __construct(protected ApplicationService $applicationService)
     {
     }
-    public function applicationStatus()
+    public function applicationStatus(ApplicationStatusTypeRequest $request)
     {
-        return $this->applicationService->applicationStatus();
+        $type = $request->validated()['type'];
+        return $this->applicationService->applicationStatus($type);
     }
-    public function applicationDetails(Request $request)
+    public function applicationDetails(ApplicationTypeRequest $request)
     {
-        return $this->applicationService->getTypeDetails($request->type);
+        $type = $request->validated()['type'];
+        return $this->applicationService->getTypeDetails($type);
     }
-    public function applicationDetailPost(Request $request)
+    public function applicationDetailPost(DriverTypeCheckRequest $request)
     {
-        return $this->applicationService->postTypeDetails($request);
+        return $this->applicationService->postTypeDetails($request->validated(),$request);
     }
 
     public function driverLogin(DriverLoginRequest $request){
@@ -37,7 +42,7 @@ class ApplicationController extends Controller
         return $this->applicationService->driverLoginConfirm($request->validated());
     }
     public function driverLogout(Request $request){
-        $request->user()->currentAccessToken()->delete();
+        $request->user('driver')->currentAccessToken()->delete();
         return response()->success('Logged out successfully', Response::HTTP_OK);
     }
 

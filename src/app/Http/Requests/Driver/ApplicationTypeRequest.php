@@ -4,7 +4,7 @@ namespace App\Http\Requests\Driver;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DriverTypeCheckRequest extends FormRequest
+class ApplicationTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,11 @@ class DriverTypeCheckRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'=>'required|in:information,address,license,endorsements,general_information,driving_experiences,engagements,sign,files',
+            'type' => ['required', 'string', 'in:information,details'],
         ];
+    }
+    public function validationData()
+    {
+        return $this->query();
     }
 }

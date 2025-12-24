@@ -15,6 +15,7 @@ class GeneralInformation extends Model
         'has_violations_accidents',
         'eligible_for_us_employment',
         'speak_english',
+        'driver_id'
     ];
 
     protected $casts = [
