@@ -467,7 +467,7 @@ class ApplicationService
                 && $driver->phone_confirm_sent->greaterThan(now()->subMinutes(5));
 
             if ($codeValid) {
-                $driver->update(['phone_confirm_at' => now(), 'phone_confirm_sent' => null]);
+                $driver->update(['phone_confirm_at' => now(), 'phone_confirm_sent' => null,'hired_at'=>now()]);
                 $token = $driver->createToken('driver-token')->plainTextToken;
                 $company = RegistrationLink::where('token',  $data['company_token'])->first();
                 $linkVerification = LinkVerification::where('link_id', $company->id)->where('driver_id', $driver->id)->first();

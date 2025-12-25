@@ -5,6 +5,7 @@ namespace App\Models\Driver;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Str;
 class Driver extends Authenticatable
 {
     use HasApiTokens;
@@ -19,6 +20,9 @@ class Driver extends Authenticatable
         'last_name',
         'ssn_sin',
         'date_of_birth',
+        'hired_at',
+        'position_dot',
+        'company_id',
     ];
     protected $hidden = [
         'driver_temp_token','rand_number','phone_confirm_at','phone_confirm_sent','ssn_sin'
@@ -28,6 +32,33 @@ class Driver extends Authenticatable
         'date_of_birth' => 'date',
         'phone_confirm_sent' => 'datetime',
     ];
+    protected $guarded = ['employee_id'];
+    protected static function booted()
+    {
+        static::creating(function ($driver) {
+            if (!$driver->employee_id) { // only generate if not set
+                $driver->employee_id = self::generateEmployeeId();
+            }
+        });
+    }
+    public static function generateEmployeeId()
+    {
+        $letters = strtoupper(Str::random(2));
+        $newNumber = 1000;
+        $lastDriver = self::where('employee_id', 'like', $letters . '%')
+            ->orderBy('id', 'desc')
+            ->first();
+        if ($lastDriver) {
+            $lastNumber = (int) substr($lastDriver->employee_id, 2);
+            $newNumber = $lastNumber + 1;
+        }
+        do {
+            $numberPart = str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            $employeeId = $letters . $numberPart;
+            $newNumber++;
+        } while (self::where('employee_id', $employeeId)->exists());
+        return $employeeId;
+    }
     public function personal_information()
     {
         return $this->hasOne(PersonalInformation::class);
@@ -47,6 +78,10 @@ class Driver extends Authenticatable
     public function employer_information()
     {
         return $this->hasMany(EmployerInformation::class);
+    }
+    public function employerInformationSingle()
+    {
+        return $this->hasOne(EmployerInformation::class);
     }
     public function driverSign(){
         return $this->hasOne(DriverSign::class);
@@ -78,7 +113,18 @@ class Driver extends Authenticatable
     {
         return $this->hasOne(DrugTest::class)->latestOfMany();
     }
-
+    public function termination()
+    {
+        return $this->hasOne(Termination::class)->latestOfMany();
+    }
+    public function trucks()
+    {
+        return $this->hasMany(Truck::class);
+    }
+    public function truck()
+    {
+        return $this->hasOne(Truck::class)->latestOfMany();
+    }
 
 
 }

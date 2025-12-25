@@ -7,12 +7,15 @@ use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\Driver\DriverTagController;
 use App\Http\Controllers\Company\CompanyDriverController;
 use App\Http\Controllers\Company\DrugTestController;
+use App\Http\Controllers\Company\DriverTerminationController;
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('driver-links',LinkGeneratorController::class);
     Route::apiResource('driver-tags', DriverTagController::class)->only(['store', 'update', 'destroy' ]);
     Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'update', 'destroy']);
-
-
+    Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store','destroy']);
     Route::get('drivers', [CompanyDriverController::class, 'getDrivers']);
+    Route::post('drivers/add-driver', [CompanyDriverController::class, 'addDriver']);
+    Route::post('drivers/change-status', [CompanyDriverController::class, 'drivers_change_status']);
+    Route::post('drivers/change-profile', [CompanyDriverController::class, 'drivers_change_profile']);
 });

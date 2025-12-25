@@ -12,14 +12,15 @@ class DriverSeeder extends Seeder
      */
     public function run(): void
     {
-        Driver::create([
+        Driver::create(array_merge([
             'primary_phone' => '+998991234567',
-            'status' => true,
-            'first_name' => 'Jakhongir',
-            'middle_name' => 'Kholkhujaev',
-            'last_name' => 'Test',
-            'ssn_sin' => '123456789',
+            'status'        => true,
+            'company_id'    => 1,
+            'first_name'    => 'Jakhongir',
+            'middle_name'   => 'Kholkhujaev',
+            'last_name'     => 'Test',
+            'ssn_sin'       => '123456789',
             'date_of_birth' => '1995-12-18',
-        ]);
+        ], ['employee_id' => Driver::generateEmployeeId()]));
     }
 }

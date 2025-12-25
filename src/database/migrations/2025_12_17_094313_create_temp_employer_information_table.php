@@ -17,11 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('driver_id');
 
             $table->string('type_engagement')->default('job');
+            $table->string('code')->nullable();
             $table->string('name')->nullable();
             $table->string('position')->nullable();
-            $table->string('address');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->string('address')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->boolean('current_employer')->default(true); // if current false , then reason for leaving must requried
             $table->text('reason_for_leaving')->nullable();
 

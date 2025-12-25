@@ -21,9 +21,21 @@ class DriverTagRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'driver_id' => 'required|exists:drivers,id',
-            'tag'       => 'required|string|max:100',
-        ];
+        if ($this->isMethod('post')) {
+
+            return [
+                'driver_id' => 'required|exists:drivers,id',
+                'tag'       => 'required|array',
+                'tag.*'     => 'string|max:200',
+            ];
+        }
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            return [
+                'driver_id' => 'required|exists:drivers,id',
+                'tag'       => 'required|string|max:200',
+            ];
+        }
+
+        return [];
     }
 }

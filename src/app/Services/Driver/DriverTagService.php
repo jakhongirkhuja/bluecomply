@@ -6,10 +6,17 @@ use App\Models\Driver\DriverTag;
 
 class DriverTagService
 {
-    public function create(array $data): DriverTag
+    public function create(array $data)
     {
-        $data['user_id'] = auth()->id();
-        return DriverTag::create($data);
+        $driverTag = [];
+        foreach ($data['tag'] as $tag) {
+            $driverTag[]= DriverTag::create([
+                'driver_id' => $data['driver_id'],
+                'tag'       => $tag,
+                'user_id'   => auth()->id()
+            ]);
+        }
+        return $driverTag;
     }
 
     public function update(DriverTag $tag, array $data): DriverTag

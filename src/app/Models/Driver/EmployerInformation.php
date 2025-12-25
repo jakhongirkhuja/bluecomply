@@ -25,6 +25,7 @@ class EmployerInformation extends Model
         'motor_vehicle',
         'type',
         'equipment_operated',
+        'code'
     ];
 
     protected $casts = [
