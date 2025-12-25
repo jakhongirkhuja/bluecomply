@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('license_details', function (Blueprint $table) {
             $table->id();
-            $table->string('type')->default('dl'); //cdl,dl,state_id
+            $table->string('type')->default('dl'); //cdl,dl,stateId
+            $table->string('license_type')->nullable();
             $table->unsignedBigInteger('driver_id');
             $table->string('license_number');
             $table->unsignedBigInteger('city_id')->nullable();

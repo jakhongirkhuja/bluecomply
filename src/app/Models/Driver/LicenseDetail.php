@@ -12,10 +12,12 @@ class LicenseDetail extends Model
         'city_id',
         'state_id',
         'license_issue_date',
+        'type_id',
         'license_expiration',
         'driver_license_front_path',
         'driver_license_back_path',
         'current',
+
     ];
     public function driver()
     {

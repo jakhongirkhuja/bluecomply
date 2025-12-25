@@ -11,4 +11,7 @@ class Endorsement extends Model
         'twic_card_path',
         'driver_id',
     ];
+    protected $casts = [
+        'endorsements' => 'array',
+    ];
 }

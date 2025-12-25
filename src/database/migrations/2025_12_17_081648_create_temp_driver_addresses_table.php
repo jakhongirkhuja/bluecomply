@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('driver_id');
             $table->string('address');
-            $table->timestamp('move_in');
+            $table->timestamp('move_in')->nullable();
             $table->timestamp('move_out')->nullable();
+            $table->string('house')->nullable();
+            $table->unsignedTinyInteger('country_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
             $table->string('zip')->nullable();

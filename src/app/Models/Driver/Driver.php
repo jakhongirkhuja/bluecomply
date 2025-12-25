@@ -90,10 +90,15 @@ class Driver extends Authenticatable
     {
         return $this->hasMany(DriverAddress::class);
     }
+    public function address()
+    {
+        return $this->hasOne(DriverAddress::class);
+    }
     public function licenses()
     {
         return $this->hasMany(LicenseDetail::class);
     }
+
     public function license()
     {
         return $this->hasOne(LicenseDetail::class)->where('current', true);

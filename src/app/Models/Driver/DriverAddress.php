@@ -14,6 +14,8 @@ class DriverAddress extends Model
         'city_id',
         'state_id',
         'zip',
+        'house',
+        'country_id',
         'currently_live',
     ];
     protected $casts = [
