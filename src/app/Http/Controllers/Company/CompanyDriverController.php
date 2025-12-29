@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\DriverProfileChangeRequest;
 use App\Http\Requests\Company\DriverStatusChangeRequest;
+use App\Http\Requests\Company\GetDriverDetailRequest;
 use App\Http\Requests\Company\GetStatusRequest;
+use App\Http\Requests\Company\StoreTaskRequest;
 use App\Http\Requests\Driver\DriverTypeCheckRequest;
+use App\Models\Company\Company;
+use App\Models\Company\Task;
 use App\Models\Driver\Driver;
 use App\Services\Company\DriverService;
 use Illuminate\Http\Request;
@@ -31,17 +35,29 @@ class CompanyDriverController extends Controller
     }
     public function getDrivers(GetStatusRequest $request){
 
+        $data = $request->validated();
+        $company_id = Company::where('id',$data['company_id'])->where('user_id',auth()->id())->value('id');
         $drivers = Driver::with(['license', 'med', 'drugTest','truck'])
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->status);
-            })
+            })->where('company_id', $company_id)
             ->latest()
             ->paginate();
         return response()->success($drivers, Response::HTTP_OK);
     }
+    public function getDriverDetails(GetDriverDetailRequest $request, $driver_id){
+
+        $driverDetails = $this->service->getDriverDetails($driver_id, $request->validated());
+        return response()->success($driverDetails, Response::HTTP_OK);
+    }
     public function addDriver(DriverTypeCheckRequest $request)
     {
         return $this->safe(fn() => response()->success($this->service->addDriver($request->validated(), $request),Response::HTTP_CREATED));
+    }
+    public function addTask(StoreTaskRequest $request)
+    {
+        return $this->safe(fn() => response()->success($this->service->addTask($request),Response::HTTP_CREATED));
+
     }
     public function drivers_change_status(DriverStatusChangeRequest $request){
         return $this->safe(fn() => response()->success($this->service->drivers_change_status($request->validated()),Response::HTTP_CREATED));

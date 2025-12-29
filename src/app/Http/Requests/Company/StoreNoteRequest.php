@@ -4,7 +4,7 @@ namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetStatusRequest extends FormRequest
+class StoreNoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,12 @@ class GetStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'=>'nullable|string|in:dispatch,expired,expiring,mission',
-            'company_id'=>'required|integer|exists:companies,id',
+            'title' => 'required|string|max:255',
+            'user_id' => 'required|array',
+            'user_id.*' => 'integer|exists:users,id',
+            'priority' => 'required|in:low,medium,high',
+            'show_at' => 'required|date|date_format:Y-m-d',
+            'driver_id' => 'required|exists:drivers,id',
         ];
-    }
-    public function validationData()
-    {
-        return $this->query();
     }
 }
