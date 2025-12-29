@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('med_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('driver_id');
+            $table->foreignId('document_id')
+                ->nullable()
+                ->after('id')
+                ->constrained('documents')
+                ->nullOnDelete();
             $table->date('med_issue_date')->nullable();
             $table->date('med_expiration')->nullable();
             $table->string('med_path')->nullable();

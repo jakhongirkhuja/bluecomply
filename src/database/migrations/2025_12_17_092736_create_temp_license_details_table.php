@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('license_details', function (Blueprint $table) {
             $table->id();
             $table->string('type')->default('dl'); //cdl,dl,stateId
+            $table->foreignId('document_id')
+                ->nullable()
+                ->after('id')
+                ->constrained('documents')
+                ->nullOnDelete();
             $table->string('license_type')->nullable();
             $table->unsignedBigInteger('driver_id');
             $table->string('license_number');

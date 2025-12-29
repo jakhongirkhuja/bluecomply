@@ -2,6 +2,7 @@
 
 namespace App\Models\Driver;
 
+use App\Models\Company\Document;
 use Illuminate\Database\Eloquent\Model;
 
 class MedDetail extends Model
@@ -11,6 +12,7 @@ class MedDetail extends Model
         'med_path',
         'med_issue_date',
         'med_expiration',
+        'document_id',
         'current',
     ];
 
@@ -23,5 +25,8 @@ class MedDetail extends Model
     public function driver()
     {
         return $this->belongsTo(Driver::class);
+    }
+    public function document() {
+        return $this->belongsTo(Document::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Driver;
 
+use App\Models\Company\Document;
 use Illuminate\Database\Eloquent\Model;
 
 class LicenseDetail extends Model
@@ -10,6 +11,7 @@ class LicenseDetail extends Model
         'driver_id',
         'license_number',
         'city_id',
+        'document_id',
         'state_id',
         'license_issue_date',
         'type_id',
@@ -35,5 +37,8 @@ class LicenseDetail extends Model
         return $this->driver_license_back_path
             ? asset('storage/' . $this->driver_license_back_path)
             : null;
+    }
+    public function document() {
+        return $this->belongsTo(Document::class);
     }
 }

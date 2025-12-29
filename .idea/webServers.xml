@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="29dbec5b-59f8-4173-9cfb-4a4e52ce18e3" name="krk">
+        <fileTransfer rootFolder="/var/www/krk.avloniy.uz/application" accessType="SFTP" host="10.10.10.24" port="22" sshConfigId="8ab9269e-c14e-406a-9171-906c02ed55cd" sshConfig="jamic@10.10.10.24:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
