@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('driver_id');
-            $table->unsignedBigInteger('state_id')->nullable();
             $table->foreignId('category_id')->constrain('document_categories');
             $table->foreignId('document_type_id')->constrained();
             $table->string('cdlclasses_id')->nullable();

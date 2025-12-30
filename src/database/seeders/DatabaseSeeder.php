@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             DriverSeeder::class,
             DocumentSeeder::class,
+            EmploymentPeriodsTableSeeder::class,
+            EmploymentVerificationsTableSeeder::class,
+            EmploymentVerificationResponsesTableSeeder::class,
+
         ]);
     }
 }

@@ -10,6 +10,8 @@ use App\Http\Controllers\Company\DrugTestController;
 use App\Http\Controllers\Company\DriverTerminationController;
 use App\Http\Controllers\Company\NoteController;
 use App\Http\Controllers\Company\DriverDocumentController;
+use App\Http\Controllers\Company\EmploymentVerificationController;
+
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
     Route::apiResource('companies', CompanyController::class);
     Route::apiResource('driver-links',LinkGeneratorController::class);
@@ -26,4 +28,31 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::post('drivers/add-driver', [CompanyDriverController::class, 'addDriver']);
     Route::post('drivers/change-status', [CompanyDriverController::class, 'drivers_change_status']);
     Route::post('drivers/change-profile', [CompanyDriverController::class, 'drivers_change_profile']);
+
+
+    Route::prefix('drivers/verifications')->group(function () {
+        // Create verification
+        Route::post('/', [EmploymentVerificationController::class, 'store'])->name('verifications.store');
+
+        // Send verification
+        Route::post('{verification}/send', [EmploymentVerificationController::class, 'send'])->name('verifications.send');
+
+        // Follow-up
+        Route::post('{verification}/follow-up', [EmploymentVerificationController::class, 'followUp'])->name('verifications.followUp');
+
+        // Provide detailed response
+        Route::post('{verification}/respond', [EmploymentVerificationController::class, 'respond'])->name('verifications.respond');
+
+        // Complete verification
+        Route::post('{verification}/complete', [EmploymentVerificationController::class, 'complete'])->name('verifications.complete');
+
+        // Delete verification
+        Route::delete('{verification}', [EmploymentVerificationController::class, 'destroy'])->name('verifications.destroy');
+
+        // Optional: list all verifications for a driver
+        Route::get('/', [EmploymentVerificationController::class, 'index'])->name('verifications.index');
+
+        // Optional: show single verification with events/responses
+        Route::get('{verification}', [EmploymentVerificationController::class, 'show'])->name('verifications.show');
+    });
 });
