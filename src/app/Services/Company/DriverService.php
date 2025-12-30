@@ -3,6 +3,7 @@
 namespace App\Services\Company;
 
 use App\Models\Company\Company;
+use App\Models\Company\Document;
 use App\Models\Company\Note;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
@@ -46,6 +47,10 @@ class DriverService
             });
 
             $response = $notes;
+        }
+        elseif ($data['category']=='documents') {
+            $response  = Document::with('files')->where('driver_id', $driver->id)->where('category_id', $data['under_category'])
+                ->paginate();
         }
         return $response;
     }

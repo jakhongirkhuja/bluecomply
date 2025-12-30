@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GetDriverDetailRequest extends FormRequest
 {
@@ -21,9 +22,38 @@ class GetDriverDetailRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categoryMap = [
+            'notes' => ['manual', 'completed'],
+            'tasks' => ['onboarding', 'compliance', 'completed'],
+            'documents' => ['1','2','3','4','5'],
+            'drugandalcohol' => ['compliance'],
+            'clearinghouse' => ['compliance'],
+            'employment' => ['onboarding'],
+            'incidents' => ['manual'],
+            'systemlog' => [],
+        ];
+
         return [
-            'category'=>'string|in:notes,tasks,documents,drugandalcohol,clearinghouse,employment,incidents,systemlog',
-            'under_category'=>'string|in:onboarding,compliance,manual,completed'
+            'category' => [
+                'required',
+                'string',
+                Rule::in(array_keys($categoryMap)),
+            ],
+
+            'under_category' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) use ($categoryMap) {
+                    $category = request('category');
+
+                    if (
+                        isset($categoryMap[$category]) &&
+                        !in_array($value, $categoryMap[$category], true)
+                    ) {
+                        $fail("The {$attribute} is invalid for category {$category}.");
+                    }
+                },
+            ],
         ];
     }
     public function validationData()

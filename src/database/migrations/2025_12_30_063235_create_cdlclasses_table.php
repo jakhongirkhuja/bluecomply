@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('document_types', function (Blueprint $table) {
+        Schema::create('cdlclasses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->string('name');
-            $table->boolean('requires_expiry')->default(false);
-            $table->boolean('requires_review')->default(false);
-            $table->boolean('is_required')->default(false);
+            $table->string('short');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_types');
+        Schema::dropIfExists('cdlclasses');
     }
 };

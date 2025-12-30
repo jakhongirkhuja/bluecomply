@@ -14,23 +14,28 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('document_type_id')->constrained()->cascadeOnDelete();
-
-            $table->string('file_name');
-            $table->string('file_path');
-            $table->unsignedInteger('file_size')->nullable();
-            $table->string('mime_type')->nullable();
-
+            $table->unsignedBigInteger('driver_id');
+            $table->unsignedBigInteger('state_id')->nullable();
+            $table->foreignId('category_id')->constrain('document_categories');
+            $table->foreignId('document_type_id')->constrained();
+            $table->string('cdlclasses_id')->nullable();
+            $table->enum('side', ['front','back'])->nullable();
+            $table->string('name')->nullable();
+            $table->string('number')->nullable();
             $table->enum('status', [
                 'valid','expiring','expired','pending_review','missing'
             ])->default('pending_review');
+            $table->boolean('current')->default(false);
 
+
+            $table->date('issue_at')->nullable();
             $table->date('expires_at')->nullable();
+            $table->unsignedBigInteger('state_id')->nullable();
             $table->enum('uploaded_by', ['driver','company_owner']);
             $table->boolean('is_encrypted')->default(false);
             $table->text('notes')->nullable();
-
             $table->timestamps();
+            $table->index(['user_id', 'document_type_id', 'side','driver_id']);
         });
     }
 
