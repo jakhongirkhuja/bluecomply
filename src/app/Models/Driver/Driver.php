@@ -25,9 +25,9 @@ class Driver extends Authenticatable
         'position_dot',
         'company_id',
     ];
-    protected $hidden = [
-        'driver_temp_token', 'rand_number', 'phone_confirm_at', 'phone_confirm_sent', 'ssn_sin'
-    ];
+//    protected $hidden = [
+//        'driver_temp_token', 'rand_number', 'phone_confirm_at', 'phone_confirm_sent', 'ssn_sin'
+//    ];
     protected $casts = [
         'status' => 'boolean',
         'date_of_birth' => 'date',

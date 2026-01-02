@@ -3,6 +3,8 @@
 namespace App\Services\Driver;
 
 use App\Http\Requests\Driver\DriverTypeCheckRequest;
+use App\Models\Company\Document;
+use App\Models\Company\DocumentType;
 use App\Models\Driver\Application;
 use App\Models\Driver\Driver;
 use App\Models\Driver\DriverAddress;
@@ -44,23 +46,15 @@ class ApplicationService
             'personal_information',
             'addresses',
             'licenses',
-            'currentLicense',
             'endorsement',
             'general_information'
         ]);
         $data['personal_information'] = $driver->personal_information;
         $data['addresses'] = $driver->addresses;
-        $data['licenses'] = $driver->licenses->map(function ($license) {
-            return [
-                'id' => $license->id,
-                'license_number' => $license->license_number,
-                'issue_date' => $license->license_issue_date,
-                'expiration' => $license->license_expiration,
-                'current' => $license->current,
-                'front_path' => $license->front_full_path,
-                'back_path' => $license->back_full_path,
-            ];
-        });
+        $documents = Document::where('driver_id', $driver->id)->whereIn('document_type_id', [1,2,4])->get();
+
+        $data['licenses'] = $documents->whereIn('document_type_id', [1,2]);
+        $data['med'] =$documents->where('document_type_id', [4]);
         $data['endorsements'] = $driver->endorsement;
         $data['general_information'] = $driver->general_information;
         return response()->success($data, Response::HTTP_OK);
@@ -167,30 +161,42 @@ class ApplicationService
     protected function postLicense(Request $request, $driver)
     {
         $data = $request->validate([
-            'id' => 'nullable|exists:license_details,id',
-            'license_number' => 'required|string|max:150',
-            'license_issue_date' => 'required|date_format:Y-m-d',
-            'license_expiration' => 'required|date_format:Y-m-d|after_or_equal:license_issue_date',
+            'id' => 'nullable|exists:documents,id',
+            'type_id' => 'required|exists:document_types,id',
+            'number' => 'required|string|max:150',
+            'cdl_class_id'=>'required_if:type_id,1|exists:cdlclasses,id',
+            'issue_at' => 'required|date_format:Y-m-d',
+            'expires_at' => 'required|date_format:Y-m-d|after_or_equal:issue_at',
 //            'state_id' => 'required|exists:states,id',
         ]);
         return DB::transaction(function () use ($data, $driver) {
             $data['state_id'] = 1;
+            $documentType = DocumentType::find($data['type_id']);
+            $payload = [
+                'user_id' => auth()->id(),
+                'driver_id' => $driver->id,
+                'category_id' =>$documentType->category_id,
+                'document_type_id' => $documentType->id,
+                'name' => $documentType->name,
+                'number'=> $data['number']?? null,
+                'issue_at'=> $data['issue_at']?? null,
+                'expires_at' => $data['expires_at'] ?? null,
+                'cdl_class_id'=>$data['cdl_class_id'] ?? null,
+                'uploaded_by' => 'driver',
+                'state_id' => $data['state_id']?? null,
+                'status' => isset($validate['expires_at']) &&
+                now()->gt($validate['expires_at']) ? 'expired' : 'valid',
+            ];
             if (!empty($data['id'])) {
-                $licenseDetail = LicenseDetail::where('id', $data['id'])
+                $document = Document::where('id', $data['id'])
                     ->where('driver_id', $driver->id)
                     ->firstOrFail();
-                $licenseDetail->update($data);
+                $document->update($payload);
             } else {
-
-                LicenseDetail::where('driver_id', $driver->id)
-                    ->update(['current' => false]);
-
-                $licenseDetail = LicenseDetail::create([
-                    'driver_id' => $driver->id,
-                    ...$data
-                ]);
+                $payload['current'] = true;
+                $document = Document::create($payload);
             }
-            return response()->success($licenseDetail, Response::HTTP_OK);
+            return response()->success($document, Response::HTTP_OK);
         });
     }
 
@@ -371,69 +377,41 @@ class ApplicationService
     protected function postFiles(Request $request, $driver)
     {
         $data = $request->validate([
-            'file_type' => 'required|string|in:license_front,license_back,medical',
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'document_id' => 'required|exists:documents,id',
+            'type_id' => 'required|numeric|exists:document_types,id',
+            'side' => 'required|string|in:front,back,default',
+            'file'=>'required|array',
+            'file.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
         ]);
 
         return DB::transaction(function () use ($data, $driver, $request) {
-
-            $file = $request->file('file');
-            $folder = match($data['file_type']) {
-                'license_front' => 'licenses/front',
-                'license_back'  => 'licenses/back',
-                'medical'       => 'medical',
-            };
-
-            $filename = time().'_'.$file->getClientOriginalName();
-            $path = $file->storeAs($folder, $filename, 'public');
-
-            switch ($data['file_type']) {
-                case 'license_front':
-                case 'license_back':
-                    $column = $data['file_type'] === 'license_front'
-                        ? 'driver_license_front_path'
-                        : 'driver_license_back_path';
-
-                    $licence = LicenseDetail::where('driver_id', $driver->id)
-                        ->where('current', true)
-                        ->first();
-                    if (!$licence) {
-                        $licence = LicenseDetail::where('driver_id', $driver->id)->latest()->first();
-                        if ($licence) $licence->current = true;
-                    }
-                    if ($licence) {
-                        $licence->$column = $path;
-                        $licence->save();
-                    }
-                    break;
-                case 'medical':
-
-                    $med = MedDetail::where('driver_id', $driver->id)
-                        ->where('current', true)
-                        ->first();
-                    if (!$med) {
-                        $med = MedDetail::where('driver_id', $driver->id)->latest()->first();
-                        if ($med) {
-                            $med->current = true;
-                        }
-                    }
-                    if (!$med) {
-                        $med = new MedDetail();
-                        $med->driver_id = $driver->id;
-                        $med->current = true;
-                    }
-                    $med->med_path = $path;
-                    $med->save();
-                    break;
+            $document = Document::where('id', $data['document_id'])->where('driver_id', $driver->id)->where('document_type_id', $data['type_id'])->firstorfail();
+            if( $data['type_id']>=1 && $data['type_id']<=3){
+                $this->storeFiles($document, $data['file'], $data['side']);
+            }else{
+                $this->storeFiles($document, $data['file']);
             }
-
-            return response()->success([
-                'file_type' => $data['file_type'],
-                'path' => $path,
-            ], Response::HTTP_OK);
+            return response()->success($document, Response::HTTP_OK);
         });
     }
+    protected function storeFiles(Document $document, array $files, string $side=null): void
+    {
+        foreach ($files as $file) {
+            $path = $file->storeAs(
+                'driver-documents',
+                Str::orderedUuid().rand(1,500).'.'.$file->getClientOriginalExtension(),
+                'public'
+            );
 
+            $document->files()->create([
+                'file_name' => $file->getClientOriginalName(),
+                'file_path' => $path,
+                'file_size' => $file->getSize(),
+                'mime_type' => $file->getMimeType(),
+                'side' => $side,
+            ]);
+        }
+    }
     public function driverLogin($data)
     {
         try {
