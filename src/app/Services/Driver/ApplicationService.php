@@ -11,6 +11,7 @@ use App\Models\Driver\DriverAddress;
 use App\Models\Driver\DriverSign;
 use App\Models\Driver\DrivingExperience;
 use App\Models\Driver\EmployerInformation;
+use App\Models\Driver\EmploymentPeriod;
 use App\Models\Driver\Endorsement;
 use App\Models\Driver\GeneralInformation;
 use App\Models\Driver\LicenseDetail;
@@ -452,6 +453,15 @@ class ApplicationService
                 if (!$linkVerification) {
                     LinkVerification::create(['link_id' => $company->id, 'driver_id' => $driver->id]);
                 }
+                EmploymentPeriod::create([
+                    'driver_id' => $driver->id,
+                    'company_id' => $company->id,
+                    'start_date' => now(),
+                    'end_date' => null,
+                    'status'=>'active',
+                    'notes' => 'New Employed',
+                    'created_by' => auth()->id(),
+                ]);
                 return response()->success([
                     'token' => $token
                 ]);

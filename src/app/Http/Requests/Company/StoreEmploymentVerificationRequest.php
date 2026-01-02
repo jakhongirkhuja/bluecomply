@@ -22,17 +22,13 @@ class StoreEmploymentVerificationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id'=>'nullable|numeric|exists:employment_verifications,id',
             'driver_id' => 'required|exists:drivers,id',
             'company_id' => 'required|exists:companies,id',
             'direction' => 'required|in:outgoing,incoming',
-            'employer_name' => 'required|string|max:255',
-            'employer_usdot' => 'nullable|string|max:50',
-            'contact_email' => 'nullable|email|max:255',
-            'contact_phone' => 'nullable|string|max:50',
-            'fax_number' => 'nullable|string|max:50',
-            'employment_start_date' => 'nullable|date',
-            'employment_end_date' => 'nullable|date|after_or_equal:employment_start_date',
-            'method' => 'required|in:email,fax',
+            'employment_start_date' => 'required|date|date_format:Y-m-d',
+            'employment_end_date' => 'required|date|date_format:Y-m-d|after_or_equal:employment_start_date',
+            'method' => 'nullable|in:email,fax',
             'notes' => 'nullable|string',
         ];
     }

@@ -24,9 +24,6 @@ class EmploymentVerificationResponsesTableSeeder extends Seeder
                 'driver_id' => $driver->id,
                 'company_id' => $company->id,
                 'direction' => 'outgoing',
-                'employer_name' => 'Swift Logistics',
-                'contact_email' => 'hr@swift.com',
-                'contact_phone' => '123-456-7890',
                 'method' => 'email',
                 'status' => 'pending',
                 'created_by' => 1,
@@ -37,9 +34,6 @@ class EmploymentVerificationResponsesTableSeeder extends Seeder
                 'driver_id' => $driver->id,
                 'company_id' => $company->id,
                 'direction' => 'incoming',
-                'employer_name' => 'Prime Transport',
-                'contact_email' => 'hr@prime.com',
-                'contact_phone' => '123-987-6543',
                 'method' => 'fax',
                 'status' => 'new',
                 'created_by' => 1,
@@ -49,7 +43,13 @@ class EmploymentVerificationResponsesTableSeeder extends Seeder
             $verification1->events()->create([
                 'type' => 'sent',
                 'method' => 'email',
-                'note' => 'Initial verification sent',
+                'note' => 'Initial verification sent vai email',
+                'created_by' => 1,
+            ]);
+            $verification1->events()->create([
+                'type' => 'sent',
+                'method' => null,
+                'note' => 'Verification sent',
                 'created_by' => 1,
             ]);
         }

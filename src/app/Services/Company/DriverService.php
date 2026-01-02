@@ -8,6 +8,8 @@ use App\Models\Company\DocumentType;
 use App\Models\Company\Note;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
+use App\Models\Driver\EmploymentPeriod;
+use App\Models\Driver\EmploymentVerification;
 use App\Models\Driver\Endorsement;
 use App\Models\Driver\LicenseDetail;
 use App\Models\Driver\MedDetail;
@@ -52,6 +54,9 @@ class DriverService
         elseif ($data['category']=='documents') {
             $response  = Document::with('files')->where('driver_id', $driver->id)->where('category_id', $data['under_category'])
                 ->paginate();
+        }
+        elseif ($data['category']=='employment') {
+            $response = EmploymentVerification::with('events','responses','company')->where('direction',$data['under_category'])->latest()->paginate();
         }
         return $response;
     }
@@ -140,6 +145,16 @@ class DriverService
             ];
 
             Document::create($payload);
+
+            EmploymentPeriod::create([
+                'driver_id' => $driver->id,
+                'company_id' => $company->id,
+                'start_date' => $data['application_date'],
+                'end_date' => null,
+                'status'=>'active',
+                'notes' => 'New Employed',
+                'created_by' => auth()->id(),
+            ]);
             return $driver->employee_id;
         });
     }
