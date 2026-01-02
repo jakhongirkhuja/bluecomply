@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('employment_verification_responses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employment_verification_id');
-
-
+            $table->string('description')->nullable();
             $table->string('position_held')->nullable();
-            $table->string('driver_class')->nullable();
+            $table->unsignedBigInteger('driver_class_id')->nullable();
             $table->string('driver_type')->nullable();
-            $table->boolean('eligible_for_rehire')->default(false);
+            $table->string('eligible_for_rehire')->nullable();
             $table->boolean('was_terminated')->default(false);
             $table->string('termination_reason')->nullable();
             $table->boolean('fmcsr_subject')->default(false);
@@ -30,7 +29,7 @@ return new class extends Migration
             $table->string('loads_hailed')->nullable();
 
 
-            $table->boolean('alcohol_0_04_or_higher')->default(false);
+            $table->boolean('alcohol_text_higher')->default(false);
             $table->boolean('verified_positive_drug_test')->default(false);
             $table->boolean('refused_test')->default(false);
             $table->boolean('other_dot_violation')->default(false);

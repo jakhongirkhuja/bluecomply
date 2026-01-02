@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('dot_recordable')->default(false);
             $table->boolean('preventable')->default(false);
             $table->string('city')->nullable();
-            $table->string('state')->nullable();
+            $table->unsignedBigInteger('state_id')->nullable();
             $table->integer('injuries')->nullable();
             $table->integer('fatalities')->nullable();
             $table->boolean('hazardous_material_involved')->default(false);

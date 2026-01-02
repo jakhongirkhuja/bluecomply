@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\StoreEmploymentVerificationRequest;
+use App\Http\Requests\Company\StoreEmploymentVerificationResponseRequest;
 use App\Models\Driver\EmploymentVerification;
 use App\Services\Company\EmploymentVerificationService;
 use Illuminate\Http\Response;
@@ -16,9 +17,9 @@ class EmploymentVerificationController extends Controller
 
     public function show($id)
     {
-        return response()->success(EmploymentVerification::with('company.user')
+        return response()->success(EmploymentVerification::with('company.user','responses.accidents')
             ->where('id', $id)
-            ->whereHas('company', fn($q) => $q->where('user_id', auth()->id()) )
+            ->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))
             ->firstOrFail());
     }
 
@@ -56,17 +57,15 @@ class EmploymentVerificationController extends Controller
 //    }
 //
 //    // Provide Response
-//    public function respond(StoreEmploymentVerificationResponseRequest $request, EmploymentVerification $verification) {
-//        $response = $verification->responses()->create($request->validated());
-//
-//        if ($request->has('accidents')) {
-//            foreach ($request->accidents as $accident) {
-//                $response->accidents()->create($accident);
-//            }
-//        }
-//
-//        return new EmploymentVerificationResponseResource($response->load('accidents'));
-//    }
+    public function respond(StoreEmploymentVerificationResponseRequest $request, $verification)
+    {
+
+        $verify = EmploymentVerification::where('id', $verification)->where('direction','outgoing')->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))->whereNotIn('status', ['denied', 'completed', 'denied-other'])->firstOrFail();
+
+        return $this->safe(fn() => response()->success($this->service->storeRespond($request->validated(), $request, $verify), Response::HTTP_CREATED));
+
+
+    }
 //
 //    // Complete Verification
 //    public function complete(Request $request, EmploymentVerification $verification) {

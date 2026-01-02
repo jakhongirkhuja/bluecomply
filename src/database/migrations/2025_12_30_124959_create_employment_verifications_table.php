@@ -19,11 +19,12 @@ return new class extends Migration
             $table->date('employment_start_date')->nullable();
             $table->date('employment_end_date')->nullable();
             $table->enum('method', ['email','fax'])->nullable();
-            $table->enum('status', ['new','pending','provided','denied','completed'])->default('new');
+            $table->text('status')->default('pending'); //'new','pending','provided','denied','completed','denied-other'
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('created_by')->constrained('users');
+            $table->unsignedBigInteger('created_by_company');
             $table->timestamps();
         });
     }

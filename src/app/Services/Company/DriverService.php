@@ -56,7 +56,13 @@ class DriverService
                 ->paginate();
         }
         elseif ($data['category']=='employment') {
-            $response = EmploymentVerification::with('events','responses','company')->where('direction',$data['under_category'])->latest()->paginate();
+            if($data['under_category']=='outgoing'){
+                $response = EmploymentVerification::with('events','responses','company')->where('driver_id', $driver->id)->where('created_by_company',$driver->company_id)->latest()->paginate();
+            }elseif($data['under_category']=='incoming'){
+                $response = EmploymentVerification::with('events','responses','company')->where('driver_id', $driver->id)->where('company_id',$driver->company_id)->latest()->paginate();
+            }else{
+                $response = EmploymentPeriod::with('createdBy')->where('driver_id', $driver->id)->where('company_id',$driver->company_id)->latest()->paginate();
+            }
         }
         return $response;
     }

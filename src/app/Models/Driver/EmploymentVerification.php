@@ -16,6 +16,7 @@ class EmploymentVerification extends Model
         'contact_email',
         'contact_phone',
         'fax_number',
+        'created_by_company',
         'employment_start_date',
         'employment_end_date',
         'method',
@@ -24,6 +25,7 @@ class EmploymentVerification extends Model
         'completed_at',
         'notes',
         'created_by',
+        'description',
     ];
 
     public function driver()
@@ -45,4 +47,5 @@ class EmploymentVerification extends Model
     {
         return $this->hasMany(EmploymentVerificationResponse::class);
     }
+
 }

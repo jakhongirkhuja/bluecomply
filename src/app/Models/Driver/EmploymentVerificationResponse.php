@@ -10,7 +10,7 @@ class EmploymentVerificationResponse extends Model
         'employment_verification_id',
 
         'position_held',
-        'driver_class',
+        'driver_class_id',
         'driver_type',
         'eligible_for_rehire',
         'was_terminated',
@@ -22,7 +22,7 @@ class EmploymentVerificationResponse extends Model
         'trailer_driven',
         'loads_hailed',
 
-        'alcohol_0_04_or_higher',
+        'alcohol_text_higher',
         'verified_positive_drug_test',
         'refused_test',
         'other_dot_violation',

@@ -1,26 +1,27 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Company\LinkGeneratorController;
 use App\Http\Controllers\Company\CompanyController;
-use App\Http\Controllers\Driver\DriverTagController;
 use App\Http\Controllers\Company\CompanyDriverController;
-use App\Http\Controllers\Company\DrugTestController;
-use App\Http\Controllers\Company\DriverTerminationController;
-use App\Http\Controllers\Company\NoteController;
 use App\Http\Controllers\Company\DriverDocumentController;
+use App\Http\Controllers\Company\DriverTerminationController;
+use App\Http\Controllers\Company\DrugTestController;
 use App\Http\Controllers\Company\EmploymentVerificationController;
+use App\Http\Controllers\Company\LinkGeneratorController;
+use App\Http\Controllers\Company\NoteController;
+use App\Http\Controllers\Driver\DriverTagController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
     Route::apiResource('companies', CompanyController::class);
-    Route::apiResource('driver-links',LinkGeneratorController::class);
-    Route::apiResource('driver-tags', DriverTagController::class)->only(['store', 'update', 'destroy' ]);
+    Route::apiResource('driver-links', LinkGeneratorController::class);
+    Route::apiResource('driver-tags', DriverTagController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'update', 'destroy']);
-    Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store','destroy']);
+    Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store', 'destroy']);
     Route::apiResource('notes', NoteController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('drivers/documents', DriverDocumentController::class)->only(['store', 'destroy']);
-    Route::apiResource('drivers/verifications', EmploymentVerificationController::class)->only(['show','store', 'destroy']);
+    Route::apiResource('drivers/verifications', EmploymentVerificationController::class)->only(['show', 'store', 'destroy']);
+    Route::post('drivers/verifications/{verification}/respond', [EmploymentVerificationController::class, 'respond']);
+
     Route::post('drivers/documents/files', [DriverDocumentController::class, 'addFiles']);
     Route::delete('drivers/documents/files/{id}', [DriverDocumentController::class, 'deleteFiles']);
     Route::get('drivers', [CompanyDriverController::class, 'getDrivers']);

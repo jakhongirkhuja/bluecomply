@@ -2,6 +2,7 @@
 
 namespace App\Models\Driver;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class EmploymentPeriod extends Model
@@ -28,5 +29,8 @@ class EmploymentPeriod extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+    public function createdBy(){
+        return $this->belongsTo(User::class,'created_by');
     }
 }
