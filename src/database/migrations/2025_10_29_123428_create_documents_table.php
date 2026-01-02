@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('driver_id');
             $table->foreignId('category_id')->constrain('document_categories');
             $table->foreignId('document_type_id')->constrained();
-            $table->string('cdlclasses_id')->nullable();
+            $table->foreignId('cdl_class_id')->constrain('cdlclasses')->nullable();
             $table->enum('side', ['front','back'])->nullable();
             $table->string('name')->nullable();
             $table->string('number')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->date('issue_at')->nullable();
             $table->date('expires_at')->nullable();
             $table->unsignedBigInteger('state_id')->nullable();
-            $table->enum('uploaded_by', ['driver','company_owner']);
+            $table->text('uploaded_by')->default('admin');
             $table->boolean('is_encrypted')->default(false);
             $table->text('notes')->nullable();
             $table->timestamps();

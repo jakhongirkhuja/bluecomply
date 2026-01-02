@@ -22,7 +22,7 @@ class DriverTypeCheckRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type'=>'required|in:information,address,license,endorsements,general_information,driving_experiences,engagements,sign,files',
+            'type'=>'required|in:information,address,license,endorsements,general_information,driving_experiences,engagements,sign,files,confirm',
         ];
     }
 }

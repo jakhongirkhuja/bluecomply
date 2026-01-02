@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Document extends Model
 {
     protected $fillable = [
-        'user_id','document_type_id','file_name','file_path','side','driver_id','current','name','number',
+        'user_id','document_type_id','file_name','file_path','side','driver_id','current','name','number','cdl_class_id',
         'status','expires_at','issue_at','uploaded_by','is_encrypted','notes','category_id','state_id','class',
     ];
 
