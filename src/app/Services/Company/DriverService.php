@@ -5,6 +5,7 @@ namespace App\Services\Company;
 use App\Models\Company\Company;
 use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
+use App\Models\Company\Incident;
 use App\Models\Company\Note;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
@@ -63,6 +64,8 @@ class DriverService
             }else{
                 $response = EmploymentPeriod::with('createdBy')->where('driver_id', $driver->id)->where('company_id',$driver->company_id)->latest()->paginate();
             }
+        }elseif ($data['category']=='incidents') {
+            $response  = Incident::where('driver_id', $driver->id)->paginate();
         }
         return $response;
     }

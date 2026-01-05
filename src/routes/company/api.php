@@ -9,6 +9,8 @@ use App\Http\Controllers\Company\EmploymentVerificationController;
 use App\Http\Controllers\Company\LinkGeneratorController;
 use App\Http\Controllers\Company\NoteController;
 use App\Http\Controllers\Driver\DriverTagController;
+use App\Http\Controllers\Company\IncidentController;
+use App\Http\Controllers\Company\ClaimController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
@@ -18,7 +20,16 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store', 'destroy']);
     Route::apiResource('notes', NoteController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('drivers/claims', ClaimController::class);
     Route::apiResource('drivers/documents', DriverDocumentController::class)->only(['store', 'destroy']);
+    Route::apiResource('drivers/incidents', IncidentController::class);  //put for accident and other demage
+    Route::put('drivers/incidents/{incident}/other-incidents', [IncidentController::class, 'createOtherIncidents']); // put for other-incidents
+    Route::put('drivers/incidents/{incident}/citations', [IncidentController::class, 'createCitation']); // put for citation
+
+    Route::post('drivers/incidents/{incident}/files', [IncidentController::class, 'files']);
+    Route::put('drivers/incidents/{incident}/files/{id}', [IncidentController::class, 'fileNameEdit']);
+    Route::delete('drivers/incidents/{incident}/files/{id}', [IncidentController::class, 'filesDelete']);
+
     Route::apiResource('drivers/verifications', EmploymentVerificationController::class)->only(['show', 'store', 'destroy']);
     Route::post('drivers/verifications/{verification}/respond', [EmploymentVerificationController::class, 'respond']);
 

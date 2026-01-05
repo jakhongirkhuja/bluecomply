@@ -16,7 +16,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-//            CitiesSeeder::class,
+            AgencySeeder::class,
+            SituationCategorySeeder::class,
+            CitiesSeeder::class,
+            VehicleSeeder::class,
             CompanySeeder::class,
             UserSeeder::class,
             DriverSeeder::class,
@@ -24,7 +27,7 @@ class DatabaseSeeder extends Seeder
             EmploymentPeriodsTableSeeder::class,
             EmploymentVerificationsTableSeeder::class,
             EmploymentVerificationResponsesTableSeeder::class,
-
+            DamageCategorySeeder::class
         ]);
     }
 }

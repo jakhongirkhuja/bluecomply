@@ -2,6 +2,7 @@
 
 namespace App\Models\Driver;
 
+use App\Models\Company\Company;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
@@ -72,7 +73,9 @@ class Driver extends Authenticatable
     {
         return $this->hasOne(Endorsement::class);
     }
-
+    public function company(){
+        return $this->belongsTo(Company::class);
+    }
     public function general_information()
     {
         return $this->hasOne(GeneralInformation::class);
@@ -161,6 +164,28 @@ class Driver extends Authenticatable
     public function employmentVerifications()
     {
         return $this->hasMany(EmploymentVerification::class);
+    }
+    public function vehicles()
+    {
+        return $this->belongsToMany(Vehicle::class, 'driver_vehicles')
+            ->withPivot(['role', 'assigned_at', 'unassigned_at', 'is_active'])
+            ->withTimestamps();
+    }
+
+    public function activeTruck()
+    {
+        return $this->vehicles()
+            ->wherePivot('role', 'Truck')
+            ->wherePivot('is_active', true)
+            ->first();
+    }
+
+    public function activeTrailer()
+    {
+        return $this->vehicles()
+            ->wherePivot('role', 'Trailer')
+            ->wherePivot('is_active', true)
+            ->first();
     }
 
 }

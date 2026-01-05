@@ -26,32 +26,33 @@ class EmploymentVerificationResponsesTableSeeder extends Seeder
                 'direction' => 'outgoing',
                 'method' => 'email',
                 'status' => 'pending',
+                'created_by_company'=>$company->id,
                 'created_by' => 1,
             ]);
-
-            // Incoming verification
-            $verification2 = EmploymentVerification::create([
-                'driver_id' => $driver->id,
-                'company_id' => $company->id,
-                'direction' => 'incoming',
-                'method' => 'fax',
-                'status' => 'new',
-                'created_by' => 1,
-            ]);
-
-            // Add an event
-            $verification1->events()->create([
-                'type' => 'sent',
-                'method' => 'email',
-                'note' => 'Initial verification sent vai email',
-                'created_by' => 1,
-            ]);
-            $verification1->events()->create([
-                'type' => 'sent',
-                'method' => null,
-                'note' => 'Verification sent',
-                'created_by' => 1,
-            ]);
+//
+//            // Incoming verification
+//            $verification2 = EmploymentVerification::create([
+//                'driver_id' => $driver->id,
+//                'company_id' => $company->id,
+//                'direction' => 'incoming',
+//                'method' => 'fax',
+//                'status' => 'new',
+//                'created_by' => 1,
+//            ]);
+//
+//            // Add an event
+//            $verification1->events()->create([
+//                'type' => 'sent',
+//                'method' => 'email',
+//                'note' => 'Initial verification sent vai email',
+//                'created_by' => 1,
+//            ]);
+//            $verification1->events()->create([
+//                'type' => 'sent',
+//                'method' => null,
+//                'note' => 'Verification sent',
+//                'created_by' => 1,
+//            ]);
         }
     }
 }

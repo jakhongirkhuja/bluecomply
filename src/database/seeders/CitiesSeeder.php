@@ -14,7 +14,10 @@ class CitiesSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = storage_path('app/data/cities.json');
+
+        $path = storage_path('app/data/cities_dummy.json');
+
+//        $path = storage_path('app/data/cities.json');
         $data = json_decode(File::get($path), true);
 
         $states = [];

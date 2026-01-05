@@ -29,7 +29,7 @@ class GetDriverDetailRequest extends FormRequest
             'drugandalcohol' => ['compliance'],
             'clearinghouse' => ['compliance'],
             'employment' => ['internal','outgoing','incoming'],
-            'incidents' => ['manual'],
+            'incidents' => ['accident','citations','inspections','clean','violations','claims','other_damage','other_incidents'],
             'systemlog' => [],
         ];
 
