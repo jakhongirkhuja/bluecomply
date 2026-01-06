@@ -65,7 +65,8 @@ class DriverService
                 $response = EmploymentPeriod::with('createdBy')->where('driver_id', $driver->id)->where('company_id',$driver->company_id)->latest()->paginate();
             }
         }elseif ($data['category']=='incidents') {
-            $response  = Incident::where('driver_id', $driver->id)->paginate();
+
+            $response  = Incident::with('claims')->where('driver_id', $driver->id)->paginate();
         }
         return $response;
     }

@@ -3,39 +3,53 @@
 namespace App\Services\Company;
 
 use App\Models\Company\Claim;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 class ClaimService
 {
-    public function store(array $data): Claim
+    public function store($data)
     {
-        $claim = Claim::create($data);
+        return DB::transaction(function () use ($data) {
+            $claims = [];
 
-        if (!empty($data['documents'])) {
-            foreach ($data['documents'] as $file) {
-                $this->storeFiles($file, $data['files']);
+            foreach ($data['claims'] as $index => $claimData) {
 
+                $files = $claimData['files'] ?? [];
+                unset($claimData['files']);
+                $claimData['company_id'] = $data['company_id'];
+                $claimData['incident_id'] = $data['incident_id'];
+                $claimData['driver_id'] = $data['driver_id'];
+                $claim =Claim::create([
+                        'company_id'  => $data['company_id'],
+                        'incident_id' => $data['incident_id'],
+                        'driver_id'   => $data['driver_id'],
+                    ] + $claimData);
+                $this->storeFiles($claim, $files);
+                $res['type'] = $claim->type;
+                $res['identifier-formatted'] = $claim->identifier_formatted;
+                $claims[] = $res;
             }
-        }
-        return $claim->load('documents', 'incident');
+            return $claims;
+        });
     }
 
 
-    public function update(Claim $claim, array $data): Claim
-    {
-        $claim->update($data);
-        return $claim->load('documents', 'incident');
-    }
+//    public function update(Claim $claim, array $data): Claim
+//    {
+//        $claim->update($data);
+//        return $claim->load('documents', 'incident');
+//    }
 
     public function delete(Claim $claim): bool
     {
-        foreach ($claim->documents as $doc) {
+        foreach ($claim->files as $doc) {
             Storage::disk('public')->delete($doc->file_path);
         }
 
         return $claim->delete();
     }
-    protected function storeFiles(Claim $claim, array $files, string $side=null): void
+    protected function storeFiles(Claim $claim, array $files): void
     {
         foreach ($files as $file) {
             $path = $file->storeAs(
@@ -44,12 +58,11 @@ class ClaimService
                 'public'
             );
 
-            $claim->documents()->create([
+            $claim->files()->create([
                 'file_name' => $file->getClientOriginalName(),
                 'file_path' => $path,
                 'file_size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
-                'side' => $side,
             ]);
         }
     }

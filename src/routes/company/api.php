@@ -20,7 +20,7 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store', 'destroy']);
     Route::apiResource('notes', NoteController::class)->only(['store', 'update', 'destroy']);
-    Route::apiResource('drivers/claims', ClaimController::class);
+    Route::apiResource('drivers/claims', ClaimController::class)->only(['show','store', 'destroy']);
     Route::apiResource('drivers/documents', DriverDocumentController::class)->only(['store', 'destroy']);
     Route::apiResource('drivers/incidents', IncidentController::class);  //put for accident and other demage
     Route::put('drivers/incidents/{incident}/other-incidents', [IncidentController::class, 'createOtherIncidents']); // put for other-incidents

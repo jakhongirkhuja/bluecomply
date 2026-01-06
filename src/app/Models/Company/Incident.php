@@ -137,4 +137,7 @@ class Incident extends Model
     public function files(){
         return $this->hasMany(IncidentFile::class);
     }
+    public function claims(){
+        return $this->hasMany(Claim::class);
+    }
 }

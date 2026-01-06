@@ -9,11 +9,11 @@ class Claim extends Model
     protected $fillable = [
         'incident_id',
         'driver_id',
-        'vehicle_id',
-        'trailer_id',
-        'claim_types',
+        'company_id',
+        'type',
+        'other_type',
         'claim_number',
-        'carrier_number',
+        'carrier_name',
         'adjuster_name',
         'adjuster_contact',
         'status',
@@ -21,21 +21,54 @@ class Claim extends Model
         'insurance_paid',
         'opposing_party_name',
         'opposing_party_insurance',
+        'repair_vendor_name',
+        'shipper_name',
+        'damage_type',
+        'cargo_value',
+        'cargo_loss_amount',
+        'internal_claim_number',
+        'opposing_carrier_name',
+
         'description',
     ];
 
-    // Cast claim_types as array
     protected $casts = [
         'claim_types' => 'array',
     ];
+    protected $hidden = [
+        'identifier'
+    ];
+    protected $appends = [
+        'identifier-formatted',
+    ];
+    public function getIdentifierFormattedAttribute(): string
+    {
+        return 'CL-' . $this->identifier;
+    }
+    protected static function boot()
+    {
+        parent::boot();
 
-    // Relationships
+        // Перед созданием модели
+        static::creating(function ($claim) {
+            if (!$claim->identifier) {
+                $claim->identifier = self::generateIdentifier();
+            }
+        });
+    }
+
+    protected static function generateIdentifier(): int
+    {
+        $last = self::latest('identifier')->first();
+
+        return $last && $last->identifier? $last->identifier + 1 : 3958;
+    }
     public function incident()
     {
         return $this->belongsTo(Incident::class);
     }
 
-    public function documents()
+    public function files()
     {
         return $this->hasMany(ClaimDocument::class);
     }

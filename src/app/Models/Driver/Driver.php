@@ -3,6 +3,7 @@
 namespace App\Models\Driver;
 
 use App\Models\Company\Company;
+use App\Models\Company\Incident;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
@@ -187,5 +188,8 @@ class Driver extends Authenticatable
             ->wherePivot('is_active', true)
             ->first();
     }
-
+    public function incidents()
+    {
+        return $this->hasMany(Incident::class);
+    }
 }
