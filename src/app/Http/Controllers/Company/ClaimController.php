@@ -16,7 +16,6 @@ class ClaimController extends Controller
     {
     }
 
-    // Show a single claim
     public function show($id)
     {
         return response()->success(
@@ -26,7 +25,6 @@ class ClaimController extends Controller
         );
     }
 
-    // Store a new claim
     public function store(StoreClaimRequest $request)
     {
         $data = $request->validated();

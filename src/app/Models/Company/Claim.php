@@ -2,10 +2,12 @@
 
 namespace App\Models\Company;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Claim extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'incident_id',
         'driver_id',

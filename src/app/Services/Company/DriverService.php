@@ -2,6 +2,7 @@
 
 namespace App\Services\Company;
 
+use App\Models\Company\ActivityLog;
 use App\Models\Company\Claim;
 use App\Models\Company\Company;
 use App\Models\Company\Document;
@@ -68,6 +69,9 @@ class DriverService
         }elseif ($data['category']=='incidents') {
 
             $response['response']  = Incident::with('claims')->where('type',$data['under_category'])->where('driver_id', $driver->id)->paginate();
+        }elseif ($data['category']=='systemlog'){
+            $response['response']  = ActivityLog::where('driver_id', $driver->id)->paginate();
+
         }
         return $response;
     }

@@ -4,13 +4,14 @@ namespace App\Models\Driver;
 
 use App\Models\Company\Company;
 use App\Models\Company\Incident;
+use App\Traits\LogsActivity;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class Driver extends Authenticatable
 {
-    use HasApiTokens;
+    use LogsActivity, HasApiTokens;
 
     protected $fillable = [
         'primary_phone',

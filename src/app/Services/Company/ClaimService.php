@@ -25,6 +25,7 @@ class ClaimService
                         'incident_id' => $data['incident_id'],
                         'driver_id'   => $data['driver_id'],
                     ] + $claimData);
+                $claim->logActivity('Claim '.$claim->identifier_formatted,'Claim information added','admin',$data['driver_id'],'claims', $claim->id);
                 $this->storeFiles($claim, $files);
                 $res['type'] = $claim->type;
                 $res['identifier-formatted'] = $claim->identifier_formatted;

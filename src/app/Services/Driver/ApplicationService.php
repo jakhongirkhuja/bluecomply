@@ -2,7 +2,6 @@
 
 namespace App\Services\Driver;
 
-use App\Http\Requests\Driver\DriverTypeCheckRequest;
 use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
 use App\Models\Driver\Application;
@@ -40,6 +39,7 @@ class ApplicationService
             default => throw new \InvalidArgumentException('Invalid application type'),
         };
     }
+
     protected function getDriverInformation()
     {
 
@@ -52,10 +52,10 @@ class ApplicationService
         ]);
         $data['personal_information'] = $driver->personal_information;
         $data['addresses'] = $driver->addresses;
-        $documents = Document::where('driver_id', $driver->id)->whereIn('document_type_id', [1,2,4])->get();
+        $documents = Document::where('driver_id', $driver->id)->whereIn('document_type_id', [1, 2, 4])->get();
 
-        $data['licenses'] = $documents->whereIn('document_type_id', [1,2]);
-        $data['med'] =$documents->where('document_type_id', [4]);
+        $data['licenses'] = $documents->whereIn('document_type_id', [1, 2]);
+        $data['med'] = $documents->where('document_type_id', [4]);
         $data['endorsements'] = $driver->endorsement;
         $data['general_information'] = $driver->general_information;
         return response()->success($data, Response::HTTP_OK);
@@ -165,7 +165,7 @@ class ApplicationService
             'id' => 'nullable|exists:documents,id',
             'type_id' => 'required|exists:document_types,id',
             'number' => 'required|string|max:150',
-            'cdl_class_id'=>'required_if:type_id,1|exists:cdlclasses,id',
+            'cdl_class_id' => 'required_if:type_id,1|exists:cdlclasses,id',
             'issue_at' => 'required|date_format:Y-m-d',
             'expires_at' => 'required|date_format:Y-m-d|after_or_equal:issue_at',
 //            'state_id' => 'required|exists:states,id',
@@ -176,15 +176,15 @@ class ApplicationService
             $payload = [
                 'user_id' => auth()->id(),
                 'driver_id' => $driver->id,
-                'category_id' =>$documentType->category_id,
+                'category_id' => $documentType->category_id,
                 'document_type_id' => $documentType->id,
                 'name' => $documentType->name,
-                'number'=> $data['number']?? null,
-                'issue_at'=> $data['issue_at']?? null,
+                'number' => $data['number'] ?? null,
+                'issue_at' => $data['issue_at'] ?? null,
                 'expires_at' => $data['expires_at'] ?? null,
-                'cdl_class_id'=>$data['cdl_class_id'] ?? null,
+                'cdl_class_id' => $data['cdl_class_id'] ?? null,
                 'uploaded_by' => 'driver',
-                'state_id' => $data['state_id']?? null,
+                'state_id' => $data['state_id'] ?? null,
                 'status' => isset($validate['expires_at']) &&
                 now()->gt($validate['expires_at']) ? 'expired' : 'valid',
             ];
@@ -315,7 +315,7 @@ class ApplicationService
         ]);
 
         return DB::transaction(function () use ($data, $driver) {
-            $data['type']=$data['work_type'];
+            $data['type'] = $data['work_type'];
             $data['driver_id'] = $driver->id;
             if (!empty($data['id'])) {
                 $employer = EmployerInformation::where('id', $data['id'])
@@ -381,26 +381,27 @@ class ApplicationService
             'document_id' => 'required|exists:documents,id',
             'type_id' => 'required|numeric|exists:document_types,id',
             'side' => 'required|string|in:front,back,default',
-            'file'=>'required|array',
+            'file' => 'required|array',
             'file.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
         ]);
 
         return DB::transaction(function () use ($data, $driver, $request) {
             $document = Document::where('id', $data['document_id'])->where('driver_id', $driver->id)->where('document_type_id', $data['type_id'])->firstorfail();
-            if( $data['type_id']>=1 && $data['type_id']<=3){
+            if ($data['type_id'] >= 1 && $data['type_id'] <= 3) {
                 $this->storeFiles($document, $data['file'], $data['side']);
-            }else{
+            } else {
                 $this->storeFiles($document, $data['file']);
             }
             return response()->success($document, Response::HTTP_OK);
         });
     }
-    protected function storeFiles(Document $document, array $files, string $side=null): void
+
+    protected function storeFiles(Document $document, array $files, string $side = null): void
     {
         foreach ($files as $file) {
             $path = $file->storeAs(
                 'driver-documents',
-                Str::orderedUuid().rand(1,500).'.'.$file->getClientOriginalExtension(),
+                Str::orderedUuid() . rand(1, 500) . '.' . $file->getClientOriginalExtension(),
                 'public'
             );
 
@@ -413,6 +414,7 @@ class ApplicationService
             ]);
         }
     }
+
     public function driverLogin($data)
     {
         try {
@@ -446,9 +448,9 @@ class ApplicationService
                 && $driver->phone_confirm_sent->greaterThan(now()->subMinutes(5));
 
             if ($codeValid) {
-                $driver->update(['phone_confirm_at' => now(), 'phone_confirm_sent' => null,'hired_at'=>now()]);
+                $driver->update(['phone_confirm_at' => now(), 'phone_confirm_sent' => null, 'hired_at' => now()]);
                 $token = $driver->createToken('driver-token')->plainTextToken;
-                $company = RegistrationLink::where('token',  $data['company_token'])->first();
+                $company = RegistrationLink::where('token', $data['company_token'])->first();
                 $linkVerification = LinkVerification::where('link_id', $company->id)->where('driver_id', $driver->id)->first();
                 if (!$linkVerification) {
                     LinkVerification::create(['link_id' => $company->id, 'driver_id' => $driver->id]);
@@ -458,10 +460,11 @@ class ApplicationService
                     'company_id' => $company->id,
                     'start_date' => now(),
                     'end_date' => null,
-                    'status'=>'active',
+                    'status' => 'active',
                     'notes' => 'New Employed',
-                    'created_by' => auth()->id(),
+                    'created_by' => $driver->id,
                 ]);
+
                 return response()->success([
                     'token' => $token
                 ]);
@@ -479,28 +482,94 @@ class ApplicationService
     public function applicationStatus($type)
     {
         $data = null;
-        if($type=='general'){
-            $user_id = Auth::guard('driver')->id();
-            $licence = LicenseDetail::where('driver_id', $user_id)->where('current',true)->first();
-            $med = MedDetail::where('driver_id', $user_id)->first();
-            $aplication = Application::where('driver_id', $user_id)->first();
+        $user_id = Auth::guard('driver')->id();
+        if ($type == 'general') {
 
-            $data['info']['dot_applicaton'] = false;
-            $data['files']['licence'] = false;
-            $data['files']['med'] = false;
-            if ($licence?->driver_license_front_path) {
-                $data['files']['licence'] = true;
+            $licence = LicenseDetail::where('driver_id', $user_id)->where('current', true)->first();
+            $med = MedDetail::where('driver_id', $user_id)->first();
+
+
+            $missing = [];
+            if (!PersonalInformation::where('driver_id', $user_id)->exists()) {
+                $missing[] = 'Missiong Personal information';
             }
-            if ($med?->med_path) {
-                $data['files']['med'] = true;
+
+            if (!DriverAddress::where('driver_id', $user_id)->exists()) {
+                $missing[] = 'Missiong Driver address';
             }
-            if ($aplication?->submitted) {
-                $data['info']['dot_applicaton'] = true;
+
+            if (!EmployerInformation::where('driver_id', $user_id)->exists()) {
+                $missing[] = 'Missiong Employer information';
             }
-        }elseif ($type=='inside'){
-            $data['personal_information'] = PersonalInformation::where('driver_id',$user_id)->exists();
-            $data['compliance_check'] = GeneralInformation::where('driver_id',$user_id)->exists();;
-            $data['professional_history'] = DrivingExperience::where('driver_id',$user_id)->exists();
+            if (!DrivingExperience::where('driver_id', $user_id)->exists()) {
+                $missing[] = 'Missiong Driving experience';
+            }
+
+
+            $driverSign = DriverSign::where('driver_id', $user_id)->exists();
+            $data['info']['D&A Policies Receipt']['status'] = $driverSign;
+            if (!$driverSign) {
+                $data['info']['D&A Policies Receipt']['info'] = ['Missing Driver Signature'];
+            }
+            $data['info']['DOT Application']['status'] = count($missing)>0? false : true;
+            if(count($missing)>0){
+                $data['info']['DOT Application']['info'] = $missing;
+            }
+
+            $documentCheck = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 4)->first();
+            $data['info']['DOT Medical Certificate']['status'] = $documentCheck? true : false;
+            $data['files']['Medical Certificate']['status'] = true;
+            if(!$documentCheck){
+                $data['info']['DOT Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
+                $data['files']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
+            }else{
+                if($documentCheck->files()->count() > 0){
+                    $data['info']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
+                }
+            }
+
+            $mission2 = [];
+            $mission2File = [];
+            $cdlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 1)->first();
+            if(!$cdlexist){
+                $mission2[] = 'Missing Commercia Driver License (CDL) information';
+                $mission2File[] = 'CDL front and back';
+            }else{
+                if($cdlexist->files->count() == 0){
+                    $mission2File[] = 'CDL front and back';
+                }
+            }
+            $dlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 2)->first();
+            if(!$dlexist){
+                $mission2File[] = 'DL front and back';
+                $mission2[] = 'Missing Driver License (DL) Information';
+
+            }else{
+                if($dlexist->files->count() == 0){
+                    $mission2File[] = 'DL front and back';
+                }
+            }
+
+            $data['info']['Driver License']['status'] = count($mission2)>0? false : true;
+            if(count($mission2)>0){
+                $data['info']['Driver License']['info'] = $mission2;
+
+            }
+
+            if(count($mission2File)>0){
+                $data['files']['License']['status'] = false;
+                $data['files']['License']['info'] = $mission2File;
+            }
+
+
+            $data['info']['Drug & Alcohol Disclosure Form Release']['status'] = true;
+
+
+
+        } elseif ($type == 'inside') {
+            $data['personal_information'] = PersonalInformation::where('driver_id', $user_id)->exists();
+            $data['compliance_check'] = GeneralInformation::where('driver_id', $user_id)->exists();;
+            $data['professional_history'] = DrivingExperience::where('driver_id', $user_id)->exists();
         }
         return response()->success($data, Response::HTTP_OK);
     }

@@ -30,7 +30,7 @@ class GetDriverDetailRequest extends FormRequest
             'clearinghouse' => ['compliance'],
             'employment' => ['internal','outgoing','incoming'],
             'incidents' => ['accident','citations','inspections','clean','violations','claims','other_damage','other_incidents'],
-            'systemlog' => [],
+            'systemlog' => ['systemlog'],
         ];
 
         return [

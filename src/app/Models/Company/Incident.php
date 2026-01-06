@@ -3,11 +3,12 @@
 namespace App\Models\Company;
 
 use App\Models\Driver\Driver;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Incident extends Model
 {
-
+    use LogsActivity;
     protected $fillable = [
         'type',
         'driver_id',
