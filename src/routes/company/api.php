@@ -14,7 +14,7 @@ use App\Http\Controllers\Company\ClaimController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
-    Route::apiResource('companies', CompanyController::class);
+
     Route::apiResource('driver-links', LinkGeneratorController::class);
     Route::apiResource('driver-tags', DriverTagController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'update', 'destroy']);

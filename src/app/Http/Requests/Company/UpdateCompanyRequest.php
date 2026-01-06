@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
-
-class CompanyRequest extends FormRequest
+use Illuminate\Validation\Rule;
+class UpdateCompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,12 +21,14 @@ class CompanyRequest extends FormRequest
      */
     public function rules(): array
     {
+        $companyId = $this->route('company'); // id из route
+
         return [
-            'company_name' => 'required|string|max:255',
-            'tenet_id' => 'required|string|max:50|unique:companies,tenet_id',
-            'dot_number' => 'required|string|max:50|unique:companies,dot_number',
-            'status'       => 'required|in:active,trail,suspended',
-            'user_id'      => 'required|integer|exists:users,id',
+            'company_name' => 'sometimes|required|string|max:255',
+            'tenet_id' => ['sometimes','required','string','max:50', Rule::unique('companies','tenet_id')->ignore($companyId)],
+            'dot_number' => ['sometimes','required','string','max:50', Rule::unique('companies','dot_number')->ignore($companyId)],
+            'user_id' => 'sometimes|required|exists:users,id',
+            'status' => 'required|string|in:active,suspended',
             'der_name' => 'required|string|max:255',
             'der_email' => 'required|email|max:255',
             'der_phone' => 'required|string|max:50',
