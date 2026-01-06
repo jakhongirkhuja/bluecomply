@@ -39,6 +39,10 @@ class Company extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'company_user', 'company_id', 'user_id');
+    }
     public function plan()
     {
         return $this->belongsTo(Plan::class);
