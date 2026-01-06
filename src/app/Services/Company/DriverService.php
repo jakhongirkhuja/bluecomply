@@ -2,6 +2,7 @@
 
 namespace App\Services\Company;
 
+use App\Models\Company\Claim;
 use App\Models\Company\Company;
 use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
@@ -66,9 +67,35 @@ class DriverService
             }
         }elseif ($data['category']=='incidents') {
 
-            $response  = Incident::with('claims')->where('driver_id', $driver->id)->paginate();
+            $response['response']  = Incident::with('claims')->where('type',$data['under_category'])->where('driver_id', $driver->id)->paginate();
         }
         return $response;
+    }
+    public function getDriverIncidentAnalytics($driverId)
+    {
+        $types = [
+            'accident',
+            'citations',
+            'inspections',
+            'clean',
+            'biolations',
+            'claims',
+            'other_damage',
+            'other_incidents',
+        ];
+
+        $counts = Incident::select('type', DB::raw('count(*) as total'))
+            ->groupBy('type')
+            ->pluck('total', 'type')
+            ->toArray();
+        $result = [];
+        foreach ($types as $type) {
+            $result[] = [
+                'type'  => $type,
+                'count' =>$type=='claims'? Claim::where('driver_id', $driverId)->count() : $counts[$type] ?? 0,
+            ];
+        }
+        return $result;
     }
     public function addTask($request){
         $data= $request->validated();

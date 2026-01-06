@@ -50,6 +50,13 @@ class CompanyDriverController extends Controller
         $driverDetails = $this->service->getDriverDetails($driver_id, $request->validated());
         return response()->success($driverDetails, Response::HTTP_OK);
     }
+    public function getDriverIncidentAnalytics( $driver_id)
+    {
+        Driver::where('id', $driver_id)->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))->firstOrFail();
+
+        $driverDetails = $this->service->getDriverIncidentAnalytics($driver_id);
+        return response()->success($driverDetails, Response::HTTP_OK);
+    }
     public function addDriver(DriverTypeCheckRequest $request)
     {
         return $this->safe(fn() => response()->success($this->service->addDriver($request->validated(), $request),Response::HTTP_CREATED));

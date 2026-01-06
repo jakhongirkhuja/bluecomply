@@ -23,6 +23,7 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::apiResource('drivers/claims', ClaimController::class)->only(['show','store', 'destroy']);
     Route::apiResource('drivers/documents', DriverDocumentController::class)->only(['store', 'destroy']);
     Route::apiResource('drivers/incidents', IncidentController::class);  //put for accident and other demage
+
     Route::put('drivers/incidents/{incident}/other-incidents', [IncidentController::class, 'createOtherIncidents']); // put for other-incidents
     Route::put('drivers/incidents/{incident}/citations', [IncidentController::class, 'createCitation']); // put for citation
 
@@ -37,6 +38,7 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::delete('drivers/documents/files/{id}', [DriverDocumentController::class, 'deleteFiles']);
     Route::get('drivers', [CompanyDriverController::class, 'getDrivers']);
     Route::get('drivers/details/{id}', [CompanyDriverController::class, 'getDriverDetails']);
+    Route::get('drivers/details/{id}/incidents/analytics', [CompanyDriverController::class, 'getDriverIncidentAnalytics']);
     Route::post('drivers/add-task', [CompanyDriverController::class, 'addTask']);
     Route::post('drivers/add-driver', [CompanyDriverController::class, 'addDriver']);
     Route::post('drivers/change-status', [CompanyDriverController::class, 'drivers_change_status']);
