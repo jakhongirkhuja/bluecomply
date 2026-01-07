@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('incident_files', function (Blueprint $table) {
+        Schema::create('violation_categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('incident_id');
-            $table->string('type')->nullable(); //corrections
-            $table->string('file_name');
-            $table->string('file_path')->unique();
-            $table->unsignedInteger('file_size');
-            $table->string('mime_type');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('incident_files');
+        Schema::dropIfExists('violation_categories');
     }
 };

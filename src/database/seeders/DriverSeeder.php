@@ -15,7 +15,7 @@ class DriverSeeder extends Seeder
         Driver::create(array_merge([
             'primary_phone' => '+998991234567',
             'status'        => true,
-            'company_id'    => 1,
+            'company_id'    => 2,
             'first_name'    => 'Jakhongir',
             'middle_name'   => 'Kholkhujaev',
             'last_name'     => 'Test',

@@ -26,6 +26,7 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
 
     Route::put('drivers/incidents/{incident}/other-incidents', [IncidentController::class, 'createOtherIncidents']); // put for other-incidents
     Route::put('drivers/incidents/{incident}/citations', [IncidentController::class, 'createCitation']); // put for citation
+    Route::put('drivers/incidents/{incident}/inspections', [IncidentController::class, 'createRoadsideInspection']); // put for citation
 
     Route::post('drivers/incidents/{incident}/files', [IncidentController::class, 'files']);
     Route::put('drivers/incidents/{incident}/files/{id}', [IncidentController::class, 'fileNameEdit']);

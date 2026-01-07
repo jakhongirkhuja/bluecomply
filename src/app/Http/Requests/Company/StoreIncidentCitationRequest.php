@@ -22,7 +22,36 @@ class StoreIncidentCitationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'driver_id'=>'required|numeric|exists:drivers,id',
+
+            'id'=>'nullable|exists:incidents,id',
+            'type' => 'required|string|in:citations,citations2',
+            'driver_id' => 'required|exists:drivers,id',
+            'date' => 'required|date|date_format:Y-m-d',
+            'time' => 'nullable|date_format:h:i A',
+
+            'location' => 'required|string|in:driver,manual',
+            'street' => 'required_if:location,manual|string|max:255',
+            'city' => 'required_if:location,manual|string|max:255',
+            'state_id' => 'required_if:location,manual|string|max:50',
+            'zip' => 'required_if:location,manual|string|max:20',
+
+            'truck'=>'required|string|in:assets,manual',
+            'truck_id'=>'required_if:truck,assets|numeric|exists:vehicles,id',
+            'truck_unit_number'=>'required_if:truck,manual|string',
+            'truck_make'=>'required_if:truck,manual|string',
+            'truck_vin'=>'required_if:truck,manual|string',
+            'truck_plate'=>'required_if:truck,manual|string',
+            'truck_plate_state_id'=>'required_if:truck,manual|numeric|exists:states,id',
+
+
+            'trailer'=>'required|string|in:assets,manual',
+            'trailer_id'=>'required_if:trailer,assets|numeric|exists:vehicles,id',
+            'trailer_unit_number'=>'required_if:truck,manual|string',
+            'trailer_make'=>'required_if:truck,manual|string',
+            'trailer_vin'=>'required_if:truck,manual|string',
+            'trailer_plate'=>'required_if:truck,manual|string',
+            'trailer_plate_state_id'=>'required_if:truck,manual|numeric|exists:states,id',
+
             'citation_category_id' => 'required|numeric|exists:citation_categories,id',
             'citation_notes' => 'required|string|max:2000',
             'citation_number' => 'required|string|max:100',

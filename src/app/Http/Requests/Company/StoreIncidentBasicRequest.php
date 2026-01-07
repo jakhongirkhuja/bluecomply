@@ -31,7 +31,7 @@ class StoreIncidentBasicRequest extends FormRequest
             'location' => 'required|string|in:driver,manual',
             'street' => 'required_if:location,manual|string|max:255',
             'city' => 'required_if:location,manual|string|max:255',
-            'state_id' => 'required_if:location,manual|string|max:50',
+            'state_id' => 'required_if:location,manual|numeric|exists:states,id',
             'zip' => 'required_if:location,manual|string|max:20',
 
             'truck'=>'required|string|in:assets,manual',

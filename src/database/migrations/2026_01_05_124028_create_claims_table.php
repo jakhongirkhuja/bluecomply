@@ -54,6 +54,8 @@ return new class extends Migration {
             // end Subrogation
 
             $table->text('description')->nullable();
+
+            $table->string('status')->default('open'); //open/reviewing/paid/denied/closed
             $table->timestamps();
         });
     }

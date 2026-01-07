@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id');
             $table->date('date');
             $table->time('time')->nullable();
+            $table->time('time_end')->nullable();
 
             $table->string('street')->nullable();
             $table->string('city')->nullable();
@@ -100,6 +101,14 @@ return new class extends Migration
             $table->boolean('lawyer_hired')->default(false);
             $table->string('lawyer_name')->nullable();
             $table->string('lawyer_contact')->nullable();
+
+
+            $table->string('report_number')->nullable();
+            $table->string('shipper_name')->nullable();
+            $table->unsignedBigInteger('inspection_level_id')->nullable();
+            $table->boolean('accident_related')->nullable();
+
+            $table->string('status')->default('open'); //open/closed/under investigation/pending
 
             $table->timestamps();
         });

@@ -100,10 +100,10 @@ class IncidentService
 
     public function addFiles($data,$incident)
     {
-        $this->storeFiles($incident, $data['files']);
+        $this->storeFiles($incident, $data['files'], $data['type'] ?? null);
         return $incident->load('files');
     }
-    protected function storeFiles(Incident $incident, array $files): void
+    protected function storeFiles(Incident $incident, array $files, $type=null): void
     {
         foreach ($files as $file) {
             $path = $file->storeAs(
@@ -113,6 +113,7 @@ class IncidentService
             );
 
             $incident->files()->create([
+                'type'=>$type,
                 'file_name' => $file->getClientOriginalName(),
                 'file_path' => $path,
                 'file_size' => $file->getSize(),

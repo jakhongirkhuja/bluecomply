@@ -22,6 +22,7 @@ class StoreIncidentFilesRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => 'nullable|string|in:corrections',
             'files' =>'required|array',
             'files.*' => ['file','mimes:pdf,png,jpg,jpeg','max:10048'],
         ];

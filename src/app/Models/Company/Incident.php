@@ -15,7 +15,7 @@ class Incident extends Model
         'company_id',
         'date',
         'time',
-
+        'time_end',
         'street',
         'city',
         'state_id',
@@ -78,8 +78,11 @@ class Incident extends Model
         'lawyer_hired',
         'lawyer_name',
         'lawyer_contact',
+        'report_number',
+        'shipper_name',
+        'inspection_level_id',
+        'accident_related'
     ];
-
     protected $casts = [
         'date' => 'date',
         'time' => 'datetime:H:i',

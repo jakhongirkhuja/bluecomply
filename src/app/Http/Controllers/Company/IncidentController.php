@@ -7,6 +7,7 @@ use App\Http\Requests\Company\StoreIncidentBasicRequest;
 use App\Http\Requests\Company\StoreIncidentCitationRequest;
 use App\Http\Requests\Company\StoreIncidentDetailRequest;
 use App\Http\Requests\Company\StoreIncidentFilesRequest;
+use App\Http\Requests\Company\StoreRoadSideInspectionRequest;
 use App\Http\Requests\Company\UpdateIncidentFileEditRequest;
 use App\Http\Requests\Company\UpdateOtherIncidentRequest;
 use App\Models\Company\Incident;
@@ -65,6 +66,17 @@ class IncidentController extends Controller
         return $this->safe(function () use ($incident, $data) {
 
             if ($incident->type == 'citations' && $incident->driver_id == $data['driver_id']) {
+
+                $incident->update($data);
+            }
+            return response()->success($incident, Response::HTTP_OK);
+        });
+    }
+    public function createRoadsideInspection(StoreRoadSideInspectionRequest $request,Incident $incident){
+        $data = $request->validated();
+        return $this->safe(function () use ($incident, $data) {
+
+            if ($incident->type == 'inspections' && $incident->driver_id == $data['driver_id']) {
 
                 $incident->update($data);
             }
