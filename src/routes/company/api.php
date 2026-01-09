@@ -12,7 +12,7 @@ use App\Http\Controllers\Driver\DriverTagController;
 use App\Http\Controllers\Company\IncidentController;
 use App\Http\Controllers\Company\ClaimController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Company\DrugTestOrderController;
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
 
     Route::apiResource('driver-links', LinkGeneratorController::class);
@@ -32,7 +32,11 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::put('drivers/incidents/{incident}/files/{id}', [IncidentController::class, 'fileNameEdit']);
     Route::delete('drivers/incidents/{incident}/files/{id}', [IncidentController::class, 'filesDelete']);
 
+    Route::apiResource('drivers/drug-alcohol', DrugTestOrderController::class)->only(['show', 'store']);
+
     Route::apiResource('drivers/verifications', EmploymentVerificationController::class)->only(['show', 'store', 'destroy']);
+
+
     Route::post('drivers/verifications/{verification}/respond', [EmploymentVerificationController::class, 'respond']);
 
     Route::post('drivers/documents/files', [DriverDocumentController::class, 'addFiles']);
@@ -43,32 +47,7 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
     Route::post('drivers/add-task', [CompanyDriverController::class, 'addTask']);
     Route::post('drivers/add-driver', [CompanyDriverController::class, 'addDriver']);
     Route::post('drivers/change-status', [CompanyDriverController::class, 'drivers_change_status']);
+    Route::post('drivers/review/{id}', [CompanyDriverController::class, 'drivers_review']);
     Route::post('drivers/change-profile', [CompanyDriverController::class, 'drivers_change_profile']);
 
-
-//    Route::prefix('drivers/verifications')->group(function () {
-//        // Create verification
-//        Route::post('/', [EmploymentVerificationController::class, 'store'])->name('verifications.store');
-//
-//        // Send verification
-//        Route::post('{verification}/send', [EmploymentVerificationController::class, 'send'])->name('verifications.send');
-//
-//        // Follow-up
-//        Route::post('{verification}/follow-up', [EmploymentVerificationController::class, 'followUp'])->name('verifications.followUp');
-//
-//        // Provide detailed response
-//        Route::post('{verification}/respond', [EmploymentVerificationController::class, 'respond'])->name('verifications.respond');
-//
-//        // Complete verification
-//        Route::post('{verification}/complete', [EmploymentVerificationController::class, 'complete'])->name('verifications.complete');
-//
-//        // Delete verification
-//        Route::delete('{verification}', [EmploymentVerificationController::class, 'destroy'])->name('verifications.destroy');
-//
-//        // Optional: list all verifications for a driver
-//        Route::get('/', [EmploymentVerificationController::class, 'index'])->name('verifications.index');
-//
-//        // Optional: show single verification with events/responses
-//        Route::get('{verification}', [EmploymentVerificationController::class, 'show'])->name('verifications.show');
-//    });
 });

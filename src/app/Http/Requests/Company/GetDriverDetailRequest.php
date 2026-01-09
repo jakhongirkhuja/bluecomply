@@ -26,7 +26,7 @@ class GetDriverDetailRequest extends FormRequest
             'notes' => ['manual', 'completed'],
             'tasks' => ['onboarding', 'compliance', 'completed'],
             'documents' => ['1','2','3','4','5'],
-            'drugandalcohol' => ['compliance'],
+            'drugandalcohol' => ['random_pool_membership','random_selection','drug_alcohol_test_history'],
             'clearinghouse' => ['compliance'],
             'employment' => ['internal','outgoing','incoming'],
             'incidents' => ['accident','citations','inspections','clean','violations','claims','other_damage','other_incidents'],

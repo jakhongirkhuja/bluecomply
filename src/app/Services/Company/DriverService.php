@@ -9,14 +9,13 @@ use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
 use App\Models\Company\Incident;
 use App\Models\Company\Note;
+use App\Models\Company\RandomPoolMembership;
+use App\Models\Company\Rejection;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
 use App\Models\Driver\EmploymentPeriod;
 use App\Models\Driver\EmploymentVerification;
 use App\Models\Driver\Endorsement;
-use App\Models\Driver\LicenseDetail;
-use App\Models\Driver\MedDetail;
-use App\Models\Driver\Termination;
 use App\Models\Driver\Truck;
 use App\Models\Registration\RegistrationLink;
 use Carbon\Carbon;
@@ -26,7 +25,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Response;
 
 class DriverService
 {
@@ -35,14 +33,14 @@ class DriverService
 
         $driver = Driver::findOrFail($driverId);
         $response = null;
-        if ($data['category']=='tasks') {
+        if ($data['category'] == 'tasks') {
 
-            $response= Task::with(['assigneed'])->where('driver_id', $driver->id)
+            $response = Task::with(['assigneed'])->where('driver_id', $driver->id)
                 ->where('category', $data['under_category'])
                 ->orderBy('due_date', 'desc')
                 ->paginate();
 
-        }elseif ($data['category']=='notes') {
+        } elseif ($data['category'] == 'notes') {
             $notes = Note::where('driver_id', $driver->id)
                 ->whereDate('show_at', Carbon::today())
                 ->orderBy('show_at', 'desc')
@@ -53,28 +51,36 @@ class DriverService
             });
 
             $response = $notes;
-        }
-        elseif ($data['category']=='documents') {
-            $response  = Document::with('files')->where('driver_id', $driver->id)->where('category_id', $data['under_category'])
+        } elseif ($data['category'] == 'documents') {
+            $response = Document::with('files')->where('driver_id', $driver->id)->where('category_id', $data['under_category'])
                 ->paginate();
-        }
-        elseif ($data['category']=='employment') {
-            if($data['under_category']=='outgoing'){
-                $response = EmploymentVerification::with('events','responses','company')->where('driver_id', $driver->id)->where('created_by_company',$driver->company_id)->latest()->paginate();
-            }elseif($data['under_category']=='incoming'){
-                $response = EmploymentVerification::with('events','responses','company')->where('driver_id', $driver->id)->where('company_id',$driver->company_id)->latest()->paginate();
-            }else{
-                $response = EmploymentPeriod::with('createdBy')->where('driver_id', $driver->id)->where('company_id',$driver->company_id)->latest()->paginate();
+        } elseif ($data['category'] == 'employment') {
+            if ($data['under_category'] == 'outgoing') {
+                $response = EmploymentVerification::with('events', 'responses', 'company')->where('driver_id', $driver->id)->where('created_by_company', $driver->company_id)->latest()->paginate();
+            } elseif ($data['under_category'] == 'incoming') {
+                $response = EmploymentVerification::with('events', 'responses', 'company')->where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
+            } else {
+                $response = EmploymentPeriod::with('createdBy')->where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
             }
-        }elseif ($data['category']=='incidents') {
+        } elseif ($data['category'] == 'incidents') {
 
-            $response['response']  = Incident::with('claims')->where('type',$data['under_category'])->where('driver_id', $driver->id)->paginate();
-        }elseif ($data['category']=='systemlog'){
-            $response['response']  = ActivityLog::where('driver_id', $driver->id)->paginate();
+            $response['response'] = Incident::with('claims')->where('type', $data['under_category'])->where('driver_id', $driver->id)->paginate();
+        } elseif ($data['category'] == 'systemlog') {
+            $response['response'] = ActivityLog::where('driver_id', $driver->id)->paginate();
+
+        } elseif ($data['category'] == 'drugandalcohol') {
+            if ($data['under_category'] == 'random_pool_membership') {
+                $response = RandomPoolMembership::where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
+            } elseif ($data['under_category'] == 'random_selection') {
+//                $response = EmploymentVerification::with('events', 'responses', 'company')->where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
+            }elseif ($data['under_category'] == 'drug_alcohol_test_history') {
+//                $response = EmploymentVerification::with('events', 'responses', 'company')->where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
+            }
 
         }
         return $response;
     }
+
     public function getDriverIncidentAnalytics($driverId)
     {
         $types = [
@@ -95,17 +101,19 @@ class DriverService
         $result = [];
         foreach ($types as $type) {
             $result[] = [
-                'type'  => $type,
-                'count' =>$type=='claims'? Claim::where('driver_id', $driverId)->count() : $counts[$type] ?? 0,
+                'type' => $type,
+                'count' => $type == 'claims' ? Claim::where('driver_id', $driverId)->count() : $counts[$type] ?? 0,
             ];
         }
         return $result;
     }
-    public function addTask($request){
-        $data= $request->validated();
-        $data['status']='in_progress';
-        $data['assigned_by']=auth()->id();
-        $data['category']='manual';
+
+    public function addTask($request)
+    {
+        $data = $request->validated();
+        $data['status'] = 'in_progress';
+        $data['assigned_by'] = auth()->id();
+        $data['category'] = 'manual';
 
         $task = Task::create($data);
         if ($request->hasFile('attachments')) {
@@ -119,6 +127,7 @@ class DriverService
         }
         return $task;
     }
+
     public function addDriver($data, $request)
     {
         return match ($data['type']) {
@@ -174,12 +183,12 @@ class DriverService
             $payload = [
                 'user_id' => auth()->id(),
                 'driver_id' => $driver->id,
-                'category_id' =>$documentType->category_id,
+                'category_id' => $documentType->category_id,
                 'document_type_id' => $documentType->id,
                 'name' => $documentType->name,
-                'number'=> null,
+                'number' => null,
                 'expires_at' => $data['med_expire_date'] ?? null,
-                'current'=>true,
+                'current' => true,
                 'uploaded_by' => 'admin',
                 'status' => isset($validate['med_expire_date']) &&
                 now()->gt($validate['med_expire_date']) ? 'expired' : 'valid',
@@ -192,7 +201,7 @@ class DriverService
                 'company_id' => $company->id,
                 'start_date' => $data['application_date'],
                 'end_date' => null,
-                'status'=>'active',
+                'status' => 'active',
                 'notes' => 'New Employed',
                 'created_by' => auth()->id(),
             ]);
@@ -225,13 +234,13 @@ class DriverService
             $payload = [
                 'user_id' => auth()->id(),
                 'driver_id' => $driver->id,
-                'category_id' =>$documentType->category_id,
+                'category_id' => $documentType->category_id,
                 'document_type_id' => $documentType->id,
                 'name' => $documentType->name,
-                'number'=> $data['number']?? null,
+                'number' => $data['number'] ?? null,
                 'expires_at' => $data['expires_at'] ?? null,
-                'current'=>true,
-                'cdl_class_id'=>$data['cdl_class_id'] ?? null,
+                'current' => true,
+                'cdl_class_id' => $data['cdl_class_id'] ?? null,
                 'uploaded_by' => auth()->user()?->role === 'admin' ? 'admin' : 'driver',
                 'status' => isset($validate['expires_at']) &&
                 now()->gt($validate['expires_at']) ? 'expired' : 'valid',
@@ -265,8 +274,8 @@ class DriverService
             'email' => 'required|email',
             'phone' => 'required|string',
         ]);
-        $data['country_id']= 1;
-        $data['city_id'] =1;
+        $data['country_id'] = 1;
+        $data['city_id'] = 1;
         $data['state_id'] = 1;
         return DB::transaction(function () use ($data) {
             $driver = Driver::where('employee_id', $data['employee_id'])->first();
@@ -289,61 +298,36 @@ class DriverService
             return $driver->employee_id;
         });
     }
+
     protected function postFiles(Request $request)
     {
         $data = $request->validate([
             'employee_id' => 'required|exists:drivers,employee_id',
             'type_id' => 'required|numeric|exists:document_types,id',
             'side' => 'required|string|in:front,back,default',
-            'file'=>'required|array',
+            'file' => 'required|array',
             'file.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
         ]);
 
-        return DB::transaction(function () use ($data,$request) {
+        return DB::transaction(function () use ($data, $request) {
             $driver = Driver::where('employee_id', $data['employee_id'])->first();
             $document = Document::where('driver_id', $driver->id)->where('document_type_id', $data['type_id'])->firstorfail();
-            if( $data['type_id']>=1 && $data['type_id']<=3){
+            if ($data['type_id'] >= 1 && $data['type_id'] <= 3) {
                 $this->storeFiles($document, $data['file'], $data['side']);
-            }else{
+            } else {
                 $this->storeFiles($document, $data['file']);
             }
             return $driver->employee_id;
 
         });
     }
-    public function postConfirm(Request $request)
-    {
-        $data = $request->validate([
-            'employee_id' => 'required|exists:drivers,employee_id',
-            'link'=>'required|numeric|between:0,1',
-        ]);
-        $driver = Driver::where('employee_id', $data['employee_id'])->first();
-        $driver->driver_temp_token = (string) Str::orderedUuid();
-        $driver->save();
-        $data['driver_token'] = (string)$driver->driver_temp_token;
-        $data['company_id']=$driver->company_id;
-        $data['driver_id']=$driver->id;
-        $data['purpose'] = 'login';
-        $data['user_id'] = Auth::id();
-        $regLink = RegistrationLink::create($data);
-        $d['name']= $driver->first_name.' '.$driver->middle_name.' '.$driver->last_name;
-        $d['employee_id'] = $driver->employee_id;
-        $d['link']= $regLink->link;
-        $d['name']= $driver->first_name.' '.$driver->middle_name.' '.$driver->last_name;
-        $d['employee_id'] = $driver->employee_id;
-        return $d;
-    }
-    public function addFiles($data,$document)
-    {
-        $this->storeFiles($document, $data['files']);
-        return 'File successefully uploaded';
-    }
-    protected function storeFiles(Document $document, array $files, string $side=null): void
+
+    protected function storeFiles(Document $document, array $files, string $side = null): void
     {
         foreach ($files as $file) {
             $path = $file->storeAs(
                 'driver-documents',
-                Str::orderedUuid().rand(1,500).'.'.$file->getClientOriginalExtension(),
+                Str::orderedUuid() . rand(1, 500) . '.' . $file->getClientOriginalExtension(),
                 'public'
             );
 
@@ -356,11 +340,67 @@ class DriverService
             ]);
         }
     }
+
+    public function postConfirm(Request $request)
+    {
+        $data = $request->validate([
+            'employee_id' => 'required|exists:drivers,employee_id',
+            'link' => 'required|numeric|between:0,1',
+        ]);
+        $driver = Driver::where('employee_id', $data['employee_id'])->first();
+        $driver->driver_temp_token = (string)Str::orderedUuid();
+        $driver->save();
+        $data['driver_token'] = (string)$driver->driver_temp_token;
+        $data['company_id'] = $driver->company_id;
+        $data['driver_id'] = $driver->id;
+        $data['purpose'] = 'login';
+        $data['user_id'] = Auth::id();
+        $regLink = RegistrationLink::create($data);
+        $d['name'] = $driver->first_name . ' ' . $driver->middle_name . ' ' . $driver->last_name;
+        $d['employee_id'] = $driver->employee_id;
+        $d['link'] = $regLink->link;
+        $d['name'] = $driver->first_name . ' ' . $driver->middle_name . ' ' . $driver->last_name;
+        $d['employee_id'] = $driver->employee_id;
+        return $d;
+    }
+
+    public function addFiles($data, $document)
+    {
+        $this->storeFiles($document, $data['files']);
+        return 'File successefully uploaded';
+    }
+
     public function drivers_change_status($data)
     {
-        Driver::where('id', $data['driver_id'])->update(['status' => $data['status']]);
-        Termination::where('driver_id', $data['driver_id'])->delete();
-        return 'Status changed to ' . $data['status'];
+        return DB::transaction(function () use ($data) {
+
+            $driver = Driver::findOrFail($data['driver_id']);
+            if ($data['status'] == 'rehire') {
+                if ($data['send'] == 1) {
+                    // send email with phone
+                }
+                $data['status'] = 'active';
+                $pools = ['urine_drug', 'breath_alcohol'];
+
+                foreach ($pools as $service) {
+                    RandomPoolMembership::create([
+                        'driver_id' => $driver->id,
+                        'company_id' => $driver->company_id,
+                        'year' => now()->year,
+                        'service' => $service,
+                        'is_dot' => true,
+                        'start_date' => now(),
+                        'note'=>'Pre-Employment'
+                    ]);
+                }
+            }
+            $driver->update([
+                'status' => $data['status'],
+                'hired_at' => $data['hired_at'] ?? null,
+            ]);
+
+            return 'Status changed to ' . $data['status'];
+        });
     }
 
     public function drivers_change_profile($data)
@@ -377,4 +417,43 @@ class DriverService
         return 'Profile updated';
     }
 
+    public function drivers_review($data, $driver)
+    {
+        return DB::transaction(function () use ($data, $driver) {
+            if ($data['status'] == 'approved') {
+                $driver->update(['status' => 'active', 'hired_at' => $data['hired_at'], 'random_pool' => $data['random_pool'], 'mvr_monitor' => $data['mvr_monitor']]);
+                if($data['random_pool'] == 1){
+                    $pools = ['urine_drug', 'breath_alcohol'];
+
+                    foreach ($pools as $service) {
+                        RandomPoolMembership::create([
+                            'driver_id' => $driver->id,
+                            'company_id' => $driver->company_id,
+                            'year' => now()->year,
+                            'service' => $service,
+                            'is_dot' => true,
+                            'start_date' => now(),
+                            'note'=>'Re-hired'
+                        ]);
+                    }
+                }
+            } else {
+                $driver->update(['status' => $data['status']]);
+                $rejection = Rejection::whereHas('company', function ($query) {
+                    $query->where('id', auth()->id());
+                })->where('driver_id', $driver->id)->first();
+                if ($rejection) {
+                    $rejection->update(['rejection_reason_id' => $data['rejection_reason_id'], 'description' => $data['description']]);
+                } else {
+                    $data['driver_id'] = $driver->id;
+                    $data['company_id'] = $driver->company_id;
+                    Rejection::create($data);
+                }
+
+            }
+            return $driver;
+        });
+
+
+    }
 }

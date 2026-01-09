@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Compony\RegistrationLinkRequest;
+use App\Http\Requests\Company\RegistrationLinkRequest;
 use App\Models\Driver\Driver;
 use App\Models\Registration\RegistrationLink;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+
 class LinkGeneratorController extends Controller
 {
     public function index()

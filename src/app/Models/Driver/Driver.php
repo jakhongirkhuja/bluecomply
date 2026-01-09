@@ -3,7 +3,9 @@
 namespace App\Models\Driver;
 
 use App\Models\Company\Company;
+use App\Models\Company\Document;
 use App\Models\Company\Incident;
+use App\Models\Company\RejectionReason;
 use App\Traits\LogsActivity;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
@@ -27,12 +29,15 @@ class Driver extends Authenticatable
         'hired_at',
         'position_dot',
         'company_id',
+        'random_pool',
+        'mvr_monitor',
     ];
 //    protected $hidden = [
 //        'driver_temp_token', 'rand_number', 'phone_confirm_at', 'phone_confirm_sent', 'ssn_sin'
 //    ];
     protected $casts = [
-        'status' => 'boolean',
+        'random_pool' => 'boolean',
+        'mvr_monitor' => 'boolean',
         'date_of_birth' => 'date',
         'phone_confirm_sent' => 'datetime',
     ];
@@ -69,6 +74,9 @@ class Driver extends Authenticatable
     public function personal_information()
     {
         return $this->hasOne(PersonalInformation::class);
+    }
+    public function rejections(){
+        return $this->hasMany(RejectionReason::class);
     }
 
     public function endorsement()
@@ -115,12 +123,12 @@ class Driver extends Authenticatable
 
     public function licenses()
     {
-        return $this->hasMany(LicenseDetail::class);
+        return $this->hasMany(Document::class);
     }
 
     public function license()
     {
-        return $this->hasOne(LicenseDetail::class)->where('current', true);
+        return $this->hasOne(Document::class)->where('document_type_id',1)->where('current', true);
     }
 
     public function meds()

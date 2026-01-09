@@ -21,13 +21,15 @@ return new class extends Migration
             $table->timestamp('phone_confirm_at')->nullable();
             $table->timestamp('phone_confirm_sent')->nullable();
             $table->uuid('driver_temp_token')->nullable();
-            $table->text('status')->default('active');
+            $table->text('status')->default('new');
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('ssn_sin')->unique()->nullable();
             $table->date('date_of_birth')->nullable();
             $table->timestamp('hired_at')->nullable();
+            $table->boolean('random_pool')->default(false);
+            $table->boolean('mvr_monitor')->default(false);
             $table->timestamps();
         });
     }

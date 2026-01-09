@@ -10,6 +10,7 @@ class DriverTerminationService
     public function create(array $data)
     {
         $driver = Driver::find($data['driver_id']);
+        $data['company_id'] = $driver->company_id;
         $termination = Termination::updateOrCreate(
             ['driver_id' => $data['driver_id']],
             $data

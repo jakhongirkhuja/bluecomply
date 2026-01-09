@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\DriverProfileChangeRequest;
+use App\Http\Requests\Company\DriverReviewRequest;
 use App\Http\Requests\Company\DriverStatusChangeRequest;
 use App\Http\Requests\Company\GetDriverDetailRequest;
 use App\Http\Requests\Company\GetStatusRequest;
@@ -71,6 +72,15 @@ class CompanyDriverController extends Controller
     }
     public function drivers_change_profile(DriverProfileChangeRequest $request){
         return $this->safe(fn() => response()->success($this->service->drivers_change_profile($request->validated()),Response::HTTP_CREATED));
+
+    }
+    public function drivers_review(DriverReviewRequest  $request, $id)
+    {
+        $driver =Driver::findorfail($id);
+        if($driver->status !='new'){
+            return response()->error('Driver current status is not new',Response::HTTP_NOT_FOUND);
+        }
+        return $this->safe(fn() => response()->success($this->service->drivers_review($request->validated(), $driver),Response::HTTP_CREATED));
 
     }
 }
