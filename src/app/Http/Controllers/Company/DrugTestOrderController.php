@@ -30,7 +30,8 @@ class DrugTestOrderController extends Controller
         }
     }
     public function show(DrugTestOrder $drug_alcohol){
-        return response()->success($drug_alcohol,);
+        dd('sds');
+        return response()->success($drug_alcohol);
     }
     public function store(ScheduleDrugTestRequest $request)
     {

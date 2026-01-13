@@ -17,7 +17,7 @@ Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { /
 
     Route::apiResource('driver-links', LinkGeneratorController::class);
     Route::apiResource('driver-tags', DriverTagController::class)->only(['store', 'update', 'destroy']);
-    Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'destroy']);
     Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store', 'destroy']);
     Route::apiResource('notes', NoteController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('drivers/claims', ClaimController::class)->only(['show','store', 'destroy']);

@@ -7,9 +7,11 @@ use App\Models\Company\Claim;
 use App\Models\Company\Company;
 use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
+use App\Models\Company\DrugTestOrder;
 use App\Models\Company\Incident;
 use App\Models\Company\Note;
 use App\Models\Company\RandomPoolMembership;
+use App\Models\Company\RandomSelection;
 use App\Models\Company\Rejection;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
@@ -72,9 +74,9 @@ class DriverService
             if ($data['under_category'] == 'random_pool_membership') {
                 $response = RandomPoolMembership::where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
             } elseif ($data['under_category'] == 'random_selection') {
-//                $response = EmploymentVerification::with('events', 'responses', 'company')->where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
+                $response = RandomSelection::where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
             }elseif ($data['under_category'] == 'drug_alcohol_test_history') {
-//                $response = EmploymentVerification::with('events', 'responses', 'company')->where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
+                $response = DrugTestOrder::where('driver_id', $driver->id)->where('company_id', $driver->company_id)->latest()->paginate();
             }
 
         }
