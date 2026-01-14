@@ -168,10 +168,10 @@ class ApplicationService
             'cdl_class_id' => 'required_if:type_id,1|exists:cdlclasses,id',
             'issue_at' => 'required|date_format:Y-m-d',
             'expires_at' => 'required|date_format:Y-m-d|after_or_equal:issue_at',
-//            'state_id' => 'required|exists:states,id',
+            'state_id' => 'required|exists:states,id',
         ]);
         return DB::transaction(function () use ($data, $driver) {
-            $data['state_id'] = 1;
+//            $data['state_id'] = 1;
             $documentType = DocumentType::find($data['type_id']);
             $payload = [
                 'user_id' => auth()->id(),
@@ -263,10 +263,10 @@ class ApplicationService
             'to' => 'required|date_format:Y-m-d|after_or_equal:from',
             'equipment_operated' => 'nullable|array',
             'equipment_operated.*' => 'string',
-//            'state_id' => 'required|exists:states,id',
+            'state_id' => 'required|exists:states,id',
         ]);
 
-        $data['state_id'] = 1;
+//        $data['state_id'] = 1;
         return DB::transaction(function () use ($data, $driver) {
 
             if (!empty($data['id'])) {

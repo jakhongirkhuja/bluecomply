@@ -4,7 +4,7 @@ namespace App\Models\General;
 
 use Illuminate\Database\Eloquent\Model;
 
-class States extends Model
+class DamageCategory extends Model
 {
-    protected $table = 'states';
+    //
 }

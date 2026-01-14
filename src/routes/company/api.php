@@ -13,6 +13,14 @@ use App\Http\Controllers\Company\IncidentController;
 use App\Http\Controllers\Company\ClaimController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Company\DrugTestOrderController;
+use App\Http\Controllers\GeneralController;
+Route::get('general', [GeneralController::class, 'getData']);
+
+
+
+Route::prefix('v1/general')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
+    Route::get('', [GeneralController::class, 'getData']);
+});
 Route::prefix('v1/company')->middleware(['auth:sanctum'])->group(function () { //auth:sanctum
 
     Route::apiResource('driver-links', LinkGeneratorController::class);

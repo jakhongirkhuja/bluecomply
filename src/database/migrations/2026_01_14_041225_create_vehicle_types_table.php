@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('document_types', function (Blueprint $table) {
+        Schema::create('vehicle_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrain('document_categories')->cascadeOnDelete();
             $table->string('name');
-            $table->boolean('requires_expiry')->default(false);
-            $table->boolean('requires_review')->default(false);
-            $table->boolean('is_required')->default(false);
-            $table->text('short')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_types');
+        Schema::dropIfExists('vehicle_types');
     }
 };

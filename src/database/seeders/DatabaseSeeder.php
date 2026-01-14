@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
             EmploymentVerificationsTableSeeder::class,
             EmploymentVerificationResponsesTableSeeder::class,
             DamageCategorySeeder::class,
+            EndorsementSeeder::class,
+            EquipmentSeeder::class,
+            VehicleSubcategorySeeder::class,
 
         ]);
     }

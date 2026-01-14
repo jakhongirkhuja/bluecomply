@@ -61,6 +61,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'CDL',
             ],
             [
                 'category_id' => $identity,
@@ -70,6 +71,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'DL',
             ],
             [
                 'category_id' => $identity,
@@ -79,6 +81,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'Passport / Green Card / Work Permit',
             ],
             [
                 'category_id' => $identity,
@@ -88,6 +91,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'Medical Card',
             ],
 
             // Background Checks
@@ -99,6 +103,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'MVR',
             ],
 
             // Other Documents
@@ -110,6 +115,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'SSN',
             ],
             [
                 'category_id' => $other,
@@ -119,6 +125,7 @@ class DocumentSeeder extends Seeder
                 'is_required' => false,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'short' => 'Other',
             ],
         ]);
 
