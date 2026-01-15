@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
 class AddUserToCompany extends FormRequest
 {
     /**
@@ -26,6 +26,12 @@ class AddUserToCompany extends FormRequest
             'email'=>'required|email|unique:users,email',
             'phone'=>'required|unique:users,phone',
             'password'=>'required|min:5',
+            'status' => 'required|in:active,inactive',
+            'role_id' => [
+                'required',
+                'integer',
+                Rule::exists('roles', 'id')->whereNotIn('id', [1, 2]),
+            ],
 
         ];
     }

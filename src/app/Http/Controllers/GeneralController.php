@@ -9,6 +9,7 @@ use App\Models\Company\DotAgency;
 use App\Models\Company\DrugTestResult;
 use App\Models\Company\InspectionLevel;
 use App\Models\Company\RejectionReason;
+use App\Models\Company\Role;
 use App\Models\Company\ViolationCategory;
 use App\Models\General\Cities;
 use App\Models\General\DamageCategory;
@@ -39,6 +40,7 @@ class GeneralController extends Controller
             'violation-categories',
             'drug-test-reasons',
             'vehicle_types',
+            'roles'
         ];
 
         if (!in_array($type, $allowed)) {
@@ -61,7 +63,9 @@ class GeneralController extends Controller
         return $method;
     }
 
-    // --- Private methods for each type ---
+    private function roles(){
+        return Role::whereNotIn('id', [1,2])->get();
+    }
     private function states()
     {
         return States::all();

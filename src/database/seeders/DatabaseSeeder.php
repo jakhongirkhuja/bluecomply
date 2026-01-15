@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             RejectionReasonsSeeder::class,
             DotAgencySeeder::class,
             DrugTestReason::class,
+            RoleSeeder::class,
             AgencySeeder::class,
             SituationCategorySeeder::class,
             ViolationAndInspectionCategory::class,

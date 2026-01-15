@@ -28,7 +28,7 @@ class UpdateCompanyRequest extends FormRequest
             'tenet_id' => ['sometimes','required','string','max:50', Rule::unique('companies','tenet_id')->ignore($companyId)],
             'dot_number' => ['sometimes','required','string','max:50', Rule::unique('companies','dot_number')->ignore($companyId)],
             'user_id' => 'sometimes|required|exists:users,id',
-            'status' => 'required|string|in:active,suspended',
+            'status'       => 'required|in:active,trial,suspended',
             'der_name' => 'required|string|max:255',
             'der_email' => 'required|email|max:255',
             'der_phone' => 'required|string|max:50',

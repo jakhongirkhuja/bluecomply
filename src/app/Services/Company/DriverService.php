@@ -204,9 +204,10 @@ class DriverService
                 'start_date' => $data['application_date'],
                 'end_date' => null,
                 'status' => 'active',
-                'notes' => 'New Employed',
+                'notes' => 'New Employed by Company Owner',
                 'created_by' => auth()->id(),
             ]);
+            $company->increment('all_drivers');
             return $driver->employee_id;
         });
     }

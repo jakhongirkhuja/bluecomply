@@ -37,6 +37,12 @@ class EditUserInCompany extends FormRequest
                 Rule::unique('users', 'phone')->ignore($userId),
             ],
             'password' => 'nullable|min:5',
+            'status' => 'required|in:active,inactive',
+            'role_id' => [
+                'required',
+                'integer',
+                Rule::exists('roles', 'id')->whereNotIn('id', [1, 2]),
+            ],
         ];
     }
 }

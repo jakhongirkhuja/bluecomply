@@ -2,6 +2,7 @@
 
 namespace App\Services\Driver;
 
+use App\Models\Company\Company;
 use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
 use App\Models\Driver\Application;
@@ -448,26 +449,42 @@ class ApplicationService
                 && $driver->phone_confirm_sent->greaterThan(now()->subMinutes(5));
 
             if ($codeValid) {
-                $driver->update(['phone_confirm_at' => now(), 'phone_confirm_sent' => null, 'hired_at' => now()]);
-                $token = $driver->createToken('driver-token')->plainTextToken;
-                $company = RegistrationLink::where('token', $data['company_token'])->first();
-                $linkVerification = LinkVerification::where('link_id', $company->id)->where('driver_id', $driver->id)->first();
-                if (!$linkVerification) {
-                    LinkVerification::create(['link_id' => $company->id, 'driver_id' => $driver->id]);
-                }
-                EmploymentPeriod::create([
-                    'driver_id' => $driver->id,
-                    'company_id' => $company->id,
-                    'start_date' => now(),
-                    'end_date' => null,
-                    'status' => 'active',
-                    'notes' => 'New Employed',
-                    'created_by' => $driver->id,
+                return response()->success([
+                    'token' => DB::transaction(function () use ($driver, $data) {
+
+                        $driver->update([
+                            'phone_confirm_at' => now(),
+                            'phone_confirm_sent' => null,
+                            'hired_at' => now(),
+                        ]);
+                        $token = $driver->createToken('driver-token')->plainTextToken;
+
+                        $company = RegistrationLink::where('token', $data['company_token'])
+                            ->with('company')
+                            ->firstOrFail()
+                            ->company;
+
+                        $company->increment('all_drivers');
+
+                        LinkVerification::firstOrCreate(
+                            ['link_id' => $company->id, 'driver_id' => $driver->id]
+                        );
+                        EmploymentPeriod::create([
+                            'driver_id' => $driver->id,
+                            'company_id' => $company->id,
+                            'start_date' => now(),
+                            'end_date' => null,
+                            'status' => 'active',
+                            'notes' => 'New Employed',
+                            'created_by' => $driver->id,
+                        ]);
+
+                        return $token;
+                    })
                 ]);
 
-                return response()->success([
-                    'token' => $token
-                ]);
+
+
             }
             return response()->error('Invalid or expired code', 400);
         } catch (\Throwable $e) {

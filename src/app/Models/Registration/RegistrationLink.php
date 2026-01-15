@@ -2,6 +2,7 @@
 
 namespace App\Models\Registration;
 
+use App\Models\Company\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -58,5 +59,8 @@ class RegistrationLink extends Model
 //        $base64 = base64_encode($json);
         $base64 = http_build_query($params);
         return  url('/').'/api/v1/driver/'.$base64;
+    }
+    public function company(){
+        return $this->belongsTo(Company::class);
     }
 }

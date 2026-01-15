@@ -25,13 +25,16 @@ class CompanyRequest extends FormRequest
             'company_name' => 'required|string|max:255',
             'tenet_id' => 'required|string|max:50|unique:companies,tenet_id',
             'dot_number' => 'required|string|max:50|unique:companies,dot_number',
-            'status'       => 'required|in:active,trail,suspended',
-            'user_id'      => 'required|integer|exists:users,id',
+            'status'       => 'required|in:active,trial,suspended',
             'der_name' => 'required|string|max:255',
             'der_email' => 'required|email|max:255',
             'der_phone' => 'required|string|max:50',
             'plan_id' => 'required|exists:plans,id',
             'drivers' => 'required|integer|min:0',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email|max:50',
+            'phone' => 'required|string|unique:users,phone|max:50',
+
         ];
     }
 }

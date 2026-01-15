@@ -3,6 +3,7 @@
 namespace App\Models\Company;
 
 use App\Models\Admin\Plan;
+use App\Models\Driver\Driver;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,7 @@ class Company extends Model
         'user_id',
         'tenet_id',
         'dot_number',
+        'all_drivers',
         'name',
         'status',
         'subscription_plan_id',
@@ -26,11 +28,13 @@ class Company extends Model
         'der_phone',
         'notes',
         'features_overrides',
-        'custom_forms'
+        'custom_forms'.
+        'drivers',
+        'plan_id'
     ];
 
     protected $casts = [
-        'status' => 'boolean',
+        'status' => 'string',
         'features_overrides' => 'array',
         'custom_forms' => 'array',
         'plan_start_date' => 'date',
@@ -42,6 +46,9 @@ class Company extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'company_user', 'company_id', 'user_id');
+    }
+    public function drivers(){
+        return $this->hasMany(Driver::class);
     }
     public function plan()
     {
