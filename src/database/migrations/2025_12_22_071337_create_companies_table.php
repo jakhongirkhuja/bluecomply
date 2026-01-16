@@ -22,8 +22,9 @@ return new class extends Migration
             $table->string('der_email')->nullable();
             $table->string('der_phone')->nullable();
             $table->timestamp('last_active')->nullable();
+            $table->text('notes')->nullable();
             $table->unsignedBigInteger('plan_id')->nullable();
-            $table->unsignedBigInteger('drivers')->nullable();
+            $table->unsignedBigInteger('drivers')->default(0);
             $table->unsignedBigInteger('all_drivers')->default(0);
             $table->timestamps();
         });

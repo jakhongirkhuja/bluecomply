@@ -34,7 +34,7 @@ class CompanyRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:50',
             'phone' => 'required|string|unique:users,phone|max:50',
-
+            'notes'=>'nullable|string|max:10000',
         ];
     }
 }

@@ -343,7 +343,7 @@ class ApplicationService
     {
         $data = $request->validate([
             'sign' => 'required|file|mimes:png,jpg,jpeg,pdf|max:2048',
-            'checked' => 'nullable|numeric|in:1',
+            'checked' => 'nullable|numeric|between:0,1',
         ]);
 
         return DB::transaction(function () use ($data, $driver, $request) {
@@ -379,7 +379,7 @@ class ApplicationService
     protected function postFiles(Request $request, $driver)
     {
         $data = $request->validate([
-            'document_id' => 'required|exists:documents,id',
+//            'document_id' => 'required|exists:documents,id',
             'type_id' => 'required|numeric|exists:document_types,id',
             'side' => 'required|string|in:front,back,default',
             'file' => 'required|array',
@@ -387,7 +387,7 @@ class ApplicationService
         ]);
 
         return DB::transaction(function () use ($data, $driver, $request) {
-            $document = Document::where('id', $data['document_id'])->where('driver_id', $driver->id)->where('document_type_id', $data['type_id'])->firstorfail();
+            $document = Document::where('driver_id', $driver->id)->where('document_type_id', $data['type_id'])->firstorfail();
             if ($data['type_id'] >= 1 && $data['type_id'] <= 3) {
                 $this->storeFiles($document, $data['file'], $data['side']);
             } else {
@@ -419,8 +419,19 @@ class ApplicationService
     public function driverLogin($data)
     {
         try {
+//            $driver = Driver::where('primary_phone', $data['primary_phone'])->first();
+//
+//            if ($driver && $driver->phone_confirm_sent) {
+//                if (Carbon::now()->diffInSeconds($driver->phone_confirm_sent) < 120) {
+//                    return response()->error(
+//                        'You can request a new code after 2 minutes',
+//                        Response::HTTP_TOO_MANY_REQUESTS
+//                    );
+//                }
+//            }
+
             $driver = Driver::updateOrCreate(
-                ['primary_phone' => $data['primary_phone']], // search criteria
+                ['primary_phone' => $data['primary_phone']],
                 [
                     'rand_number' => rand(1000, 9999),
                     'phone_confirm_sent' => Carbon::now(),
@@ -535,12 +546,15 @@ class ApplicationService
 
             $documentCheck = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 4)->first();
             $data['info']['DOT Medical Certificate']['status'] = $documentCheck? true : false;
-            $data['files']['Medical Certificate']['status'] = true;
+
             if(!$documentCheck){
+                $data['files']['Medical Certificate']['status'] = false;
+                $data['files']['Medical Certificate']['type_id'] = 4;
                 $data['info']['DOT Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
-                $data['files']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
+                $data['files']['Medical Certificate']['info'] = ['Missing Medical Certificate files'];
             }else{
                 if($documentCheck->files()->count() > 0){
+                    $data['files']['Medical Certificate']['status'] = true;
                     $data['info']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
                 }
             }
@@ -549,21 +563,34 @@ class ApplicationService
             $mission2File = [];
             $cdlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 1)->first();
             if(!$cdlexist){
-                $mission2[] = 'Missing Commercia Driver License (CDL) information';
-                $mission2File[] = 'CDL front and back';
+
+                $data['info']['License (CDL)']['status'] = false;
+                $data['info']['License (CDL)']['info'] = ['Missing Commercia Driver License (CDL) information'];
+                $data['files']['License (CDL)']['status'] = false;
+                $data['files']['License (CDL)']['type_id'] = 1;
+                $data['files']['License (CDL)']['info'] =['CDL front and back'];
+
             }else{
+
                 if($cdlexist->files->count() == 0){
-                    $mission2File[] = 'CDL front and back';
+                    $data['files']['License (CDL)']['status'] = false;
+                    $data['files']['License (CDL)']['type_id'] = 1;
+                    $data['files']['License (CDL)']['info'] =['CDL front and back'];
                 }
             }
             $dlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 2)->first();
             if(!$dlexist){
-                $mission2File[] = 'DL front and back';
-                $mission2[] = 'Missing Driver License (DL) Information';
-
+                $data['info']['License (DL)']['status'] = false;
+                $data['info']['License (DL)']['info'] = ['Missing Driver License (DL) Information'];
+                $data['files']['License (DL)']['status'] = false;
+                $data['files']['License (DL)']['type_id'] = 2;
+                $data['files']['License (DL)']['info'] =['DL front and back'];
             }else{
                 if($dlexist->files->count() == 0){
-                    $mission2File[] = 'DL front and back';
+                    $data['files']['License (DL)']['status'] = false;
+                    $data['files']['License (DL)']['type_id'] = 2;
+                    $data['files']['License (DL)']['info'] =['DL front and back'];
+
                 }
             }
 
@@ -573,10 +600,6 @@ class ApplicationService
 
             }
 
-            if(count($mission2File)>0){
-                $data['files']['License']['status'] = false;
-                $data['files']['License']['info'] = $mission2File;
-            }
 
 
             $data['info']['Drug & Alcohol Disclosure Form Release']['status'] = true;

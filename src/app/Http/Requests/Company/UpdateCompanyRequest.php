@@ -34,6 +34,7 @@ class UpdateCompanyRequest extends FormRequest
             'der_phone' => 'required|string|max:50',
             'plan_id' => 'required|exists:plans,id',
             'drivers' => 'required|integer|min:0',
+            'notes'=>'nullable|string|max:10000',
         ];
     }
 }
