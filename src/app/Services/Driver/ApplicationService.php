@@ -183,6 +183,7 @@ class ApplicationService
                 'number' => $data['number'] ?? null,
                 'issue_at' => $data['issue_at'] ?? null,
                 'expires_at' => $data['expires_at'] ?? null,
+                'company_id' =>$driver->company_id,
                 'cdl_class_id' => $data['cdl_class_id'] ?? null,
                 'uploaded_by' => 'driver',
                 'state_id' => $data['state_id'] ?? null,
@@ -545,12 +546,13 @@ class ApplicationService
             }
 
             $documentCheck = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 4)->first();
-            $data['info']['DOT Medical Certificate']['status'] = $documentCheck? true : false;
+            $data['info']['Medical Certificate']['status'] = $documentCheck? true : false;
 
             if(!$documentCheck){
                 $data['files']['Medical Certificate']['status'] = false;
                 $data['files']['Medical Certificate']['type_id'] = 4;
-                $data['info']['DOT Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
+                $data['info']['Medical Certificate']['type_id'] = 4;
+                $data['info']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
                 $data['files']['Medical Certificate']['info'] = ['Missing Medical Certificate files'];
             }else{
                 if($documentCheck->files()->count() > 0){
@@ -568,6 +570,7 @@ class ApplicationService
                 $data['info']['License (CDL)']['info'] = ['Missing Commercia Driver License (CDL) information'];
                 $data['files']['License (CDL)']['status'] = false;
                 $data['files']['License (CDL)']['type_id'] = 1;
+                $data['info']['License (CDL)']['type_id'] = 1;
                 $data['files']['License (CDL)']['info'] =['CDL front and back'];
 
             }else{
@@ -584,6 +587,7 @@ class ApplicationService
                 $data['info']['License (DL)']['info'] = ['Missing Driver License (DL) Information'];
                 $data['files']['License (DL)']['status'] = false;
                 $data['files']['License (DL)']['type_id'] = 2;
+                $data['info']['License (DL)']['type_id'] = 4;
                 $data['files']['License (DL)']['info'] =['DL front and back'];
             }else{
                 if($dlexist->files->count() == 0){

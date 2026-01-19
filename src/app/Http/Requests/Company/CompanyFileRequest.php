@@ -4,7 +4,7 @@ namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegistrationLinkRequest extends FormRequest
+class CompanyFileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,9 @@ class RegistrationLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'     => 'boolean',
-            'driver_id'   => 'nullable|exists:drivers,id',
-            'purpose'    => 'nullable|string|required_with:driver_id',
+
+            'files' => 'required|array',
+            'files.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
         ];
     }
 }

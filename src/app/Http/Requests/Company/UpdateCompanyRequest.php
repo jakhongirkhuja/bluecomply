@@ -32,7 +32,7 @@ class UpdateCompanyRequest extends FormRequest
             'der_name' => 'required|string|max:255',
             'der_email' => 'required|email|max:255',
             'der_phone' => 'required|string|max:50',
-            'plan_id' => 'required|exists:plans,id',
+            'plan_id' => 'required_if:status,active|exists:plans,id',
             'drivers' => 'required|integer|min:0',
             'notes'=>'nullable|string|max:10000',
         ];

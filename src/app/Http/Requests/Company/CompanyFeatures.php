@@ -4,7 +4,7 @@ namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegistrationLinkRequest extends FormRequest
+class CompanyFeatures extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,11 @@ class RegistrationLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'     => 'boolean',
-            'driver_id'   => 'nullable|exists:drivers,id',
-            'purpose'    => 'nullable|string|required_with:driver_id',
+            'claims_modal' => 'required|numeric|between:0,1',
+            'roadside_inspections' => 'required|numeric|between:0,1',
+            'drug_alcohol_testing' => 'required|numeric|between:0,1',
+            'mvr_ordering' => 'required|numeric|between:0,1',
+            'bulk_driver_import' => 'required|numeric|between:0,1',
         ];
     }
 }

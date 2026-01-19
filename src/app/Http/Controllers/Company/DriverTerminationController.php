@@ -25,11 +25,11 @@ class DriverTerminationController extends Controller
             );
         }
     }
-    public function store(DriverTerminationRequest $request)
+    public function store(DriverTerminationRequest $request, $company_id)
     {
         return $this->safe(fn() => response()->success($this->service->create($request->validated()),Response::HTTP_CREATED));
     }
-    public function destroy(Termination $driverTermination)
+    public function destroy(Termination $driverTermination, $company_id)
     {
         return $this->safe(fn() => response()->success($this->service->delete($driverTermination)));
     }

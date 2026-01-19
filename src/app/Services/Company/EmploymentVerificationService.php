@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\DB;
 
 class EmploymentVerificationService
 {
-    public function store(array $data)
+    public function store(array $data, $company_id)
     {
-        return DB::transaction(function () use ($data) {
-            $company = Company::where('user_id', auth()->id())->firstOrFail();
+        return DB::transaction(function () use ($data, $company_id) {
+
             $employmentPayload =[
                 'driver_id' => $data['driver_id'],
-                'company_id' => $data['company_id'],
+                'company_id' => $company_id,
                 'direction'=> $data['direction'],
                 'method' => $data['method']??null,
                 'status' => 'pending',
@@ -23,7 +23,7 @@ class EmploymentVerificationService
                 'employment_start_date'=>$data['employment_start_date'],
                 'employment_end_date'=>$data['employment_end_date'],
                 'sent_at'=>now(),
-                'created_by_company'=>$company->id,
+                'created_by_company'=>$company_id,
                 'created_by' => auth()->id(),
             ];
             if(isset($data['id'])){

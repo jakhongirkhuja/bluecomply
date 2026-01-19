@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('related_type')->nullable();
             $table->unsignedBigInteger('related_id')->nullable();
             $table->date('due_date')->nullable();
-            $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->text('priority')->default('medium');
             $table->timestamps();
         });
     }

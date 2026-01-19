@@ -18,11 +18,11 @@ class LinkGeneratorController extends Controller
             RegistrationLink::where('user_id', Auth::id())->latest()->paginate(30)
         );
     }
-    public function store(RegistrationLinkRequest $request)
+    public function store(RegistrationLinkRequest $request, $company_id)
     {
         $data = $request->validated();
+        $data['company_id'] = $company_id;
         if(isset($data['driver_id'])){
-
             $driver = Driver::find($data['driver_id']);
             $driver->driver_temp_token = (string) Str::orderedUuid();
             $driver->save();
@@ -34,11 +34,11 @@ class LinkGeneratorController extends Controller
         $link['link'] = $regLink->link;
         return response()->success($link, Response::HTTP_CREATED);
     }
-    public function show(RegistrationLink $registrationLink)
+    public function show(RegistrationLink $registrationLink, $company_id)
     {
         return response()->success($registrationLink);
     }
-    public function update( RegistrationLinkRequest $request, RegistrationLink $registrationLink) {
+    public function update( RegistrationLinkRequest $request, RegistrationLink $registrationLink, $company_id) {
         $data = $request->validated();
         if(isset($data['driver_id'])){
             $driver = Driver::find('id', $data['driver_id']);
@@ -48,7 +48,7 @@ class LinkGeneratorController extends Controller
         $registrationLink->update($data);
         return response()->success($registrationLink);
     }
-    public function destroy(RegistrationLink $registrationLink)
+    public function destroy(RegistrationLink $registrationLink, $company_id)
     {
         $registrationLink->delete();
         return response()->success(null,Response::HTTP_NO_CONTENT);

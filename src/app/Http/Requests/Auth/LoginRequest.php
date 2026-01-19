@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Company;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegistrationLinkRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,7 @@ class RegistrationLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'     => 'boolean',
-            'driver_id'   => 'nullable|exists:drivers,id',
-            'purpose'    => 'nullable|string|required_with:driver_id',
+            'primary_phone' => 'required|exists:users,phone',
         ];
     }
 }

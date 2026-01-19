@@ -8,20 +8,20 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 class ClaimService
 {
-    public function store($data)
+    public function store($data,$company_id)
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data, $company_id) {
             $claims = [];
 
             foreach ($data['claims'] as $index => $claimData) {
 
                 $files = $claimData['files'] ?? [];
                 unset($claimData['files']);
-                $claimData['company_id'] = $data['company_id'];
+                $claimData['company_id'] = $company_id;
                 $claimData['incident_id'] = $data['incident_id'];
                 $claimData['driver_id'] = $data['driver_id'];
                 $claim =Claim::create([
-                        'company_id'  => $data['company_id'],
+                        'company_id'  => $company_id,
                         'incident_id' => $data['incident_id'],
                         'driver_id'   => $data['driver_id'],
                     ] + $claimData);

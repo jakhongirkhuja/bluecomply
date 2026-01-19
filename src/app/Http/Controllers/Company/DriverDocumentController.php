@@ -35,18 +35,15 @@ class DriverDocumentController extends Controller
             );
         }
     }
-    public function addFiles(AddImageToDocumentRequest $request){
+    public function addFiles(AddImageToDocumentRequest $request, $company_id){
         $data= $request->validated();
-        $company_id = Company::where('user_id', auth()->id())->firstorfail()->value('id');
         Driver::where('id',$data['driver_id'])->where('company_id',$company_id)->firstorfail();
         $document = Document::find($data['document_id']);
         return $this->safe(fn () =>response()->success($this->service->addFiles($data,$document),Response::HTTP_CREATED));
     }
-    public function deleteFiles($id)
+    public function deleteFiles($company_id,$id)
     {
-        $company_id = Company::where('user_id', auth()->id())->firstorfail()->value('id');
 
-        abort_if(!$company_id, 403, 'Unauthorized');
         $file = DocumentFile::with('document.driver')
             ->findOrFail($id);
         abort_if(
@@ -62,11 +59,10 @@ class DriverDocumentController extends Controller
         response()->success($this->service->listByDriver($request->get('user_id'))));
     }
 
-    public function store(DriverDocumentRequest $request)
+    public function store(DriverDocumentRequest $request, $company_id)
     {
         $data = $request->validated();
 
-        $company_id = Company::where('user_id', auth()->id())->firstorfail()->value('id');
         $document = null;
         if(isset($data['id'])){
             $document = Document::find($data['id']);
@@ -74,17 +70,17 @@ class DriverDocumentController extends Controller
 
         Driver::where('id',$data['driver_id'])->where('company_id',$company_id)->firstorfail();
         return match ($data['document_type_id']) {
-            '1' => $this->postmaindocs($data,$request,$document),
-            '2' => $this->postmaindocs($data,$request,$document),
-            '3' => $this->postotherdocs($data,$request,$document),
-            '4' => $this->postmaindocs($data,$request,$document),
-            '5' => $this->postotherdocs($data,$request,$document),
-            '6' => $this->postotherdocs($data,$request,$document),
-            '7' => $this->postotherdocs($data,$request,$document),
+            '1' => $this->postmaindocs($data,$request,$document,$company_id),
+            '2' => $this->postmaindocs($data,$request,$document,$company_id),
+            '3' => $this->postotherdocs($data,$request,$document,$company_id),
+            '4' => $this->postmaindocs($data,$request,$document,$company_id),
+            '5' => $this->postotherdocs($data,$request,$document,$company_id),
+            '6' => $this->postotherdocs($data,$request,$document,$company_id),
+            '7' => $this->postotherdocs($data,$request,$document,$company_id),
             default => throw new \InvalidArgumentException('Invalid application type'),
         };
     }
-    protected function postotherdocs($data,$request, $document){
+    protected function postotherdocs($data,$request, $document,$company_id){
         $validate = $request->validate([
             //            'state_id' => 'required|exists:states,id',
             'category_id' => [
@@ -111,10 +107,10 @@ class DriverDocumentController extends Controller
             'files.*' => ['file','mimes:pdf,png,jpg,jpeg','max:10048'],
 
         ]);
-        return $this->safe(fn () =>response()->success($this->service->postotherdocs($data,$validate,$document),Response::HTTP_CREATED));
+        return $this->safe(fn () =>response()->success($this->service->postotherdocs($data,$validate,$document,$company_id),Response::HTTP_CREATED));
 
     }
-    protected function postmaindocs($data, Request $request, $document)
+    protected function postmaindocs($data, Request $request, $document, $company_id)
     {
 
         $validate = $request->validate([
@@ -170,7 +166,7 @@ class DriverDocumentController extends Controller
         ]);
 
         $validate['state_id'] = 1;
-        return $this->safe(fn () =>response()->success($this->service->postmaindocs($data,$validate, $document),Response::HTTP_CREATED));
+        return $this->safe(fn () =>response()->success($this->service->postmaindocs($data,$validate, $document, $company_id),Response::HTTP_CREATED));
     }
     public function destroy(Document $driverDocument)
     {

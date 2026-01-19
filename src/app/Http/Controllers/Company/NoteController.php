@@ -26,7 +26,7 @@ class NoteController extends Controller
             );
         }
     }
-    public function store(StoreNoteRequest $request)
+    public function store(StoreNoteRequest $request, $comapny_id)
     {
         $data = $request->validated();
         $userIds = $data['user_id'];
@@ -39,9 +39,9 @@ class NoteController extends Controller
         $data['user_id'] = $eligibleUsers;
         $data['created_by']= auth()->id();
 
-        return $this->safe(fn() => response()->success($this->service->create($data),Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->create($data, $comapny_id),Response::HTTP_CREATED));
     }
-    public function update(StoreNoteRequest $request, Note $note)
+    public function update(StoreNoteRequest $request, Note $note, $comapny_id)
     {
         $data = $request->validated();
         if (isset($data['user_id'])) {
@@ -51,9 +51,9 @@ class NoteController extends Controller
             }
             $data['user_id'] = $eligibleUsers;
         }
-        return $this->safe(fn() => response()->success($this->service->update($note, $data),Response::HTTP_OK));
+        return $this->safe(fn() => response()->success($this->service->update($note, $data, $comapny_id),Response::HTTP_OK));
     }
-    public function destroy(Note $note)
+    public function destroy(Note $note, $comapny_id)
     {
         $note->delete();
         return response()->success($note, Response::HTTP_NO_CONTENT);

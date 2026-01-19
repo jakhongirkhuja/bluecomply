@@ -26,6 +26,12 @@ return new class extends Migration
             $table->unsignedBigInteger('plan_id')->nullable();
             $table->unsignedBigInteger('drivers')->default(0);
             $table->unsignedBigInteger('all_drivers')->default(0);
+
+            $table->boolean('claims_modal')->default(false);
+            $table->boolean('roadside_inspections')->default(false);
+            $table->boolean('drug_alcohol_testing')->default(false);
+            $table->boolean('mvr_ordering')->default(false);
+            $table->boolean('bulk_driver_import')->default(false);
             $table->timestamps();
         });
     }

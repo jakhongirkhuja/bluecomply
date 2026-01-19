@@ -30,7 +30,7 @@ use Illuminate\Support\Str;
 
 class DriverService
 {
-    public function getDriverDetails($driverId, $data)
+    public function getDriverDetails($driverId, $data,$company_id)
     {
 
         $driver = Driver::findOrFail($driverId);
@@ -83,21 +83,24 @@ class DriverService
         return $response;
     }
 
-    public function getDriverIncidentAnalytics($driverId)
+    public function getDriverIncidentAnalytics($driverId, $company_id)
     {
         $types = [
             'accident',
             'citations',
             'inspections',
             'clean',
-            'biolations',
+            'violations',
             'claims',
             'other_damage',
             'other_incidents',
         ];
 
-        $counts = Incident::select('type', DB::raw('count(*) as total'))
+        $counts = Incident::query()
+            ->where('company_id', $company_id)
+            ->select('type', DB::raw('count(*) as total'))
             ->groupBy('type')
+            ->get()
             ->pluck('total', 'type')
             ->toArray();
         $result = [];
@@ -110,13 +113,13 @@ class DriverService
         return $result;
     }
 
-    public function addTask($request)
+    public function addTask($request,$company_id)
     {
         $data = $request->validated();
         $data['status'] = 'in_progress';
         $data['assigned_by'] = auth()->id();
         $data['category'] = 'manual';
-
+        $data['company_id'] = $company_id;
         $task = Task::create($data);
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
@@ -130,10 +133,10 @@ class DriverService
         return $task;
     }
 
-    public function addDriver($data, $request)
+    public function addDriver($data, $request, $company_id)
     {
         return match ($data['type']) {
-            'information' => $this->postPersonalInformation($request),
+            'information' => $this->postPersonalInformation($request, $company_id),
             'license' => $this->postLicense($request),
             'address' => $this->postAddress($request),
             'files' => $this->postFiles($request),
@@ -142,7 +145,7 @@ class DriverService
         };
     }
 
-    protected function postPersonalInformation(Request $request)
+    protected function postPersonalInformation(Request $request, $company_id)
     {
         $data = $request->validate([
             'first_name' => 'required|string',
@@ -157,9 +160,9 @@ class DriverService
             'position_dot' => 'required|numeric|between:0,1',
         ]);
 
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data, $company_id) {
 
-            $company = Company::where('user_id', Auth::id())->firstorfail();
+            $company = Company::findorfail($company_id);
 
             $driver = Driver::create([
                 'ssn_sin' => $data['ssn_sin'] ?? null,
@@ -420,9 +423,9 @@ class DriverService
         return 'Profile updated';
     }
 
-    public function drivers_review($data, $driver)
+    public function drivers_review($data, $driver,$company_id)
     {
-        return DB::transaction(function () use ($data, $driver) {
+        return DB::transaction(function () use ($data, $driver,$company_id) {
             if ($data['status'] == 'approved') {
                 $driver->update(['status' => 'active', 'hired_at' => $data['hired_at'], 'random_pool' => $data['random_pool'], 'mvr_monitor' => $data['mvr_monitor']]);
                 if($data['random_pool'] == 1){
@@ -442,9 +445,7 @@ class DriverService
                 }
             } else {
                 $driver->update(['status' => $data['status']]);
-                $rejection = Rejection::whereHas('company', function ($query) {
-                    $query->where('id', auth()->id());
-                })->where('driver_id', $driver->id)->first();
+                $rejection = Rejection::where('company_id',$company_id)->where('driver_id', $driver->id)->first();
                 if ($rejection) {
                     $rejection->update(['rejection_reason_id' => $data['rejection_reason_id'], 'description' => $data['description']]);
                 } else {

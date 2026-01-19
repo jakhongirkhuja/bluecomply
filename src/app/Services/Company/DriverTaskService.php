@@ -19,6 +19,7 @@ class DriverTaskService
             'related_type' => $data['related_type'] ?? null,
             'related_id'   => $data['related_id'] ?? null,
             'due_date'     => $data['due_date'] ?? null,
+            'company_id'   => $data['company_id'] ?? null,
         ];
         return Task::create($taskData);
     }

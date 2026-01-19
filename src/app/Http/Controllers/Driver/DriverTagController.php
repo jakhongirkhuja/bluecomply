@@ -25,16 +25,16 @@ class DriverTagController extends Controller
 
         }
     }
-    public function store(DriverTagRequest $request)
+    public function store(DriverTagRequest $request, $comapny_id)
     {
-        return $this->safe(fn() => response()->success($this->service->create($request->validated()), Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->create($request->validated(),$comapny_id), Response::HTTP_CREATED));
     }
-    public function update(DriverTagRequest $request, DriverTag $driverTag)
+    public function update(DriverTagRequest $request, DriverTag $driverTag,$comapny_id)
     {
-        return $this->safe(fn() => response()->success($this->service->update($driverTag, $request->validated()), Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->update($driverTag, $request->validated(),$comapny_id), Response::HTTP_CREATED));
     }
-    public function destroy(DriverTag $driverTag)
+    public function destroy(DriverTag $driverTag, $comapny_id)
     {
-        return $this->safe(fn() => response()->success($this->service->delete($driverTag), Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->delete($driverTag, $comapny_id), Response::HTTP_CREATED));
     }
 }

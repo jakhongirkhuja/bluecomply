@@ -28,7 +28,7 @@ class StoreTaskRequest extends FormRequest
             'related_type' => 'nullable|string|in:trailer,truck,asset',
             'related_id' => 'nullable|string',
             'due_date' => 'required|date|date_format:Y-m-d',
-            'priority' => 'required|in:low,medium,high',
+            'priority' => 'required|in:low,medium,high,critical',
             'attachments'=>'nullable|array',
             'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
         ];

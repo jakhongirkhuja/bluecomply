@@ -7,11 +7,11 @@ use App\Models\Company\Note;
 
 class NoteService
 {
-    public function create($data)
+    public function create($data, $comapny_id)
     {
        return  Note::create($data);
     }
-    public function update(Note $note, array $data)
+    public function update(Note $note, array $data,$comapny_id)
     {
         $note->update($data);
         return $note;

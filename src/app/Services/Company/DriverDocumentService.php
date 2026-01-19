@@ -25,9 +25,9 @@ class DriverDocumentService
         }
         return $file->delete();
     }
-    public function postotherdocs(array $data, array $validate, $document)
+    public function postotherdocs(array $data, array $validate, $document, $company_id)
     {
-        return DB::transaction(function () use ($data, $validate, $document) {
+        return DB::transaction(function () use ($data, $validate, $document, $company_id) {
             $documentType = DocumentType::find($data['document_type_id']);
             $payload = [
                 'user_id' => auth()->id(),
@@ -38,6 +38,7 @@ class DriverDocumentService
                 'number'=> $validate['number']?? null,
                 'expires_at' => $validate['expires_at'] ?? null,
                 'current'=>false,
+                'company_id'=>$company_id,
                 'uploaded_by' => auth()->user()?->role === 'admin' ? 'admin' : 'driver',
                 'status' => isset($validate['expires_at']) &&
                 now()->gt($validate['expires_at']) ? 'expired' : 'valid',
@@ -51,10 +52,10 @@ class DriverDocumentService
             return $document;
         });
     }
-    public function postmaindocs(array $data, array $validate, $document)
+    public function postmaindocs(array $data, array $validate, $document, $company_id)
     {
 
-        return DB::transaction(function () use ($data, $validate, $document) {
+        return DB::transaction(function () use ($data, $validate, $document, $company_id) {
             $documentType = DocumentType::find($data['document_type_id']);
             $payload = [
                 'user_id' => auth()->id(),
@@ -68,6 +69,7 @@ class DriverDocumentService
                 'issue_at'=> $validate['issue_at'] ?? null,
                 'expires_at' => $validate['expires_at'] ?? null,
                 'current'=>$validate['current'],
+                'company_id'=>$company_id,
                 'state_id' => $validate['state_id'],
                 'uploaded_by' => auth()->user()?->role === 'admin' ? 'admin' : 'driver',
                 'status' => isset($validate['expires_at']) &&

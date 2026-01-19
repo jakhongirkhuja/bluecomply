@@ -12,6 +12,7 @@ class Task extends Model
         'assigned_by',
         'assigned_to',
         'title',
+        'company_id',
         'description',
         'category',
         'status',

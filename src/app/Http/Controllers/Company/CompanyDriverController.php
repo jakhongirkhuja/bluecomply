@@ -34,10 +34,8 @@ class CompanyDriverController extends Controller
             );
         }
     }
-    public function getDrivers(GetStatusRequest $request){
+    public function getDrivers(GetStatusRequest $request,$company_id){
 
-        $data = $request->validated();
-        $company_id = Company::where('id',$data['company_id'])->where('user_id',auth()->id())->value('id');
         $drivers = Driver::with(['license', 'med', 'drugTest','truck'])
             ->when($request->filled('status'), function ($query) use ($request) {
                 $query->where('status', $request->status);
@@ -46,25 +44,25 @@ class CompanyDriverController extends Controller
             ->paginate();
         return response()->success($drivers, Response::HTTP_OK);
     }
-    public function getDriverDetails(GetDriverDetailRequest $request, $driver_id){
+    public function getDriverDetails(GetDriverDetailRequest $request, $company_id,$driver_id){
 
-        $driverDetails = $this->service->getDriverDetails($driver_id, $request->validated());
+        $driverDetails = $this->service->getDriverDetails($driver_id, $request->validated(),$company_id);
         return response()->success($driverDetails, Response::HTTP_OK);
     }
-    public function getDriverIncidentAnalytics( $driver_id)
+    public function getDriverIncidentAnalytics($company_id, $driver_id)
     {
-        Driver::where('id', $driver_id)->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))->firstOrFail();
+        Driver::where('id', $driver_id)->where('company_id',$company_id)->firstOrFail();
 
-        $driverDetails = $this->service->getDriverIncidentAnalytics($driver_id);
+        $driverDetails = $this->service->getDriverIncidentAnalytics($driver_id, $company_id);
         return response()->success($driverDetails, Response::HTTP_OK);
     }
     public function addDriver(DriverTypeCheckRequest $request)
     {
         return $this->safe(fn() => response()->success($this->service->addDriver($request->validated(), $request),Response::HTTP_CREATED));
     }
-    public function addTask(StoreTaskRequest $request)
+    public function addTask(StoreTaskRequest $request, $company_id)
     {
-        return $this->safe(fn() => response()->success($this->service->addTask($request),Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->addTask($request, $company_id),Response::HTTP_CREATED));
 
     }
     public function drivers_change_status(DriverStatusChangeRequest $request){
@@ -74,13 +72,13 @@ class CompanyDriverController extends Controller
         return $this->safe(fn() => response()->success($this->service->drivers_change_profile($request->validated()),Response::HTTP_CREATED));
 
     }
-    public function drivers_review(DriverReviewRequest  $request, $id)
+    public function drivers_review(DriverReviewRequest  $request,$company_id,$id)
     {
-        $driver =Driver::findorfail($id);
+        $driver =Driver::where('company_id',$company_id)->findorfail($id);
         if($driver->status !='new'){
             return response()->error('Driver current status is not new',Response::HTTP_NOT_FOUND);
         }
-        return $this->safe(fn() => response()->success($this->service->drivers_review($request->validated(), $driver),Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->drivers_review($request->validated(), $driver, $company_id),Response::HTTP_CREATED));
 
     }
 }

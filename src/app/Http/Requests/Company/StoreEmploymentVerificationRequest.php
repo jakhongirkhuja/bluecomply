@@ -24,7 +24,6 @@ class StoreEmploymentVerificationRequest extends FormRequest
         return [
             'id'=>'nullable|numeric|exists:employment_verifications,id',
             'driver_id' => 'required|exists:drivers,id',
-            'company_id' => 'required|exists:companies,id',
             'direction' => 'required|in:outgoing,incoming',
             'employment_start_date' => 'required|date|date_format:Y-m-d',
             'employment_end_date' => 'required|date|date_format:Y-m-d|after_or_equal:employment_start_date',

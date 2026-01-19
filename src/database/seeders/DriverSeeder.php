@@ -5,22 +5,33 @@ namespace Database\Seeders;
 use App\Models\Driver\Driver;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
+use Illuminate\Foundation\Testing\WithFaker;
 class DriverSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    use WithFaker;
     public function run(): void
     {
-        Driver::create(array_merge([
-            'primary_phone' => '+998991234567',
-            'status'        => true,
-            'company_id'    => 2,
-            'first_name'    => 'Jakhongir',
-            'middle_name'   => 'Kholkhujaev',
-            'last_name'     => 'Test',
-            'ssn_sin'       => '123456789',
-            'date_of_birth' => '1995-12-18',
-        ], ['employee_id' => Driver::generateEmployeeId()]));
+        $this->setUpFaker('en_US');
+        $this->faker->unique(true);
+
+        for ($i = 0; $i < 70; $i++) {
+            Driver::create([
+                'primary_phone' => '+1' . $this->faker->unique()->numerify('##########'),
+                'status'        => true,
+                'company_id'    => 2,
+
+                'first_name'    => $this->faker->firstName,
+                'middle_name'   => $this->faker->optional()->firstName,
+                'last_name'     => $this->faker->lastName,
+
+                'ssn_sin'       => $this->faker->unique()->ssn,
+                'date_of_birth' => $this->faker
+                    ->dateTimeBetween('-60 years', '-21 years')
+                    ->format('Y-m-d'),
+
+                'employee_id'   => Driver::generateEmployeeId(),
+            ]);
+        }
     }
 }

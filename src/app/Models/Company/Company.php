@@ -30,7 +30,12 @@ class Company extends Model
         'features_overrides',
         'custom_forms'.
         'drivers',
-        'plan_id'
+        'plan_id',
+        'claims_modal',
+        'roadside_inspections',
+        'drug_alcohol_testing',
+        'mvr_ordering',
+        'bulk_driver_import',
     ];
 
     protected $casts = [
@@ -38,6 +43,11 @@ class Company extends Model
         'features_overrides' => 'array',
         'custom_forms' => 'array',
         'plan_start_date' => 'date',
+        'claims_modal' => 'boolean',
+        'roadside_inspections' => 'boolean',
+        'drug_alcohol_testing' => 'boolean',
+        'mvr_ordering' => 'boolean',
+        'bulk_driver_import' => 'boolean',
     ];
     public function user()
     {
@@ -58,5 +68,8 @@ class Company extends Model
     {
         return $this->belongsToMany(User::class, 'company_user', 'company_id', 'user_id')
             ->where('role_id', 3);
+    }
+    public function files(){
+        return $this->hasMany(CompanyFile::class);
     }
 }

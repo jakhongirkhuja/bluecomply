@@ -29,21 +29,18 @@ class DrugTestOrderController extends Controller
             );
         }
     }
-    public function show(DrugTestOrder $drug_alcohol){
-        dd('sds');
+    public function show($company_id, DrugTestOrder $drug_alcohol){
         return response()->success($drug_alcohol);
     }
-    public function store(ScheduleDrugTestRequest $request)
+    public function store(ScheduleDrugTestRequest $request, $company_id)
     {
         $data = $request->validated();
-        return $this->safe(function () use ($request) {
+        return $this->safe(function () use ($request,$company_id) {
 
             $data = $request->validated();
 
-            return DB::transaction(function () use ($data) {
+            return DB::transaction(function () use ($data, $company_id) {
 
-                $company_id = Company::where('user_id', auth()->id())
-                    ->value('id');
 
                 $driver = Driver::with(['license', 'personal_information'])
                     ->where('company_id', $company_id)

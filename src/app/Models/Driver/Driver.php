@@ -7,13 +7,14 @@ use App\Models\Company\Document;
 use App\Models\Company\Incident;
 use App\Models\Company\RejectionReason;
 use App\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class Driver extends Authenticatable
 {
-    use LogsActivity, HasApiTokens;
+    use LogsActivity, HasApiTokens, HasFactory;
 
     protected $fillable = [
         'primary_phone',

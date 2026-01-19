@@ -27,7 +27,11 @@ class User extends Authenticatable
         'phone',
         'last_login',
         'status',
+        'rand_number',
+        'phone_confirm_at',
+        'phone_confirm_sent',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,6 +53,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
+            'phone_confirm_sent' => 'datetime',
         ];
     }
     public function role()

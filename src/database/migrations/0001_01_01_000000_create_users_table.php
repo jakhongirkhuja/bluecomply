@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('password');
             $table->timestamp('last_login')->nullable();
             $table->text('status')->default('active');
+            $table->string('rand_number')->nullable();
+            $table->timestamp('phone_confirm_at')->nullable();
+            $table->timestamp('phone_confirm_sent')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

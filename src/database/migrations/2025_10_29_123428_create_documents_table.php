@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('status', [
                 'valid','expiring','expired','pending_review','missing'
             ])->default('pending_review');
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->boolean('current')->default(false);
 
 

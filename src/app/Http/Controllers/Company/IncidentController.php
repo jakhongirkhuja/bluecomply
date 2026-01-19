@@ -32,11 +32,11 @@ class IncidentController extends Controller
         );
     }
 
-    public function store(StoreIncidentBasicRequest $request)
+    public function store(StoreIncidentBasicRequest $request, $company_id)
     {
 
         $data = $request->validated();
-        $driverExist = Driver::where('id', $data['driver_id'])->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))->firstOrFail();
+        $driverExist = Driver::where('id', $data['driver_id'])->where('company_id', $company_id)->firstOrFail();
         if ($driverExist) {
             $data['company_id'] = $driverExist->company_id;
             return $this->safe(fn() => response()->success(

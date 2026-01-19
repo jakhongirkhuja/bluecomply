@@ -6,7 +6,7 @@ use App\Models\Driver\DriverTag;
 
 class DriverTagService
 {
-    public function create(array $data)
+    public function create(array $data, $comapny_id)
     {
         $driverTag = [];
         foreach ($data['tag'] as $tag) {
@@ -19,14 +19,14 @@ class DriverTagService
         return $driverTag;
     }
 
-    public function update(DriverTag $tag, array $data): DriverTag
+    public function update(DriverTag $tag, array $data, $comapny_id): DriverTag
     {
         $data['user_id'] = auth()->id();
         $tag->update($data);
         return $tag;
     }
 
-    public function delete(DriverTag $tag): bool
+    public function delete(DriverTag $tag, $comapny_id): bool
     {
         return $tag->delete();
     }

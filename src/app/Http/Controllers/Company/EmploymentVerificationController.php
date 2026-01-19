@@ -15,17 +15,16 @@ class EmploymentVerificationController extends Controller
     {
     }
 
-    public function show($id)
+    public function show($id, $company_id)
     {
         return response()->success(EmploymentVerification::with('company.user','responses.accidents')
-            ->where('id', $id)
-            ->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))
+            ->where('id', $id)->where('company_id', $company_id)
             ->firstOrFail());
     }
 
-    public function store(StoreEmploymentVerificationRequest $request)
+    public function store(StoreEmploymentVerificationRequest $request, $company_id)
     {
-        return $this->safe(fn() => response()->success($this->service->store($request->validated()), Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->store($request->validated(), $company_id), Response::HTTP_CREATED));
     }
 
     // Create Verification

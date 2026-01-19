@@ -25,21 +25,19 @@ class ClaimController extends Controller
         );
     }
 
-    public function store(StoreClaimRequest $request)
+    public function store(StoreClaimRequest $request, $company_id)
     {
         $data = $request->validated();
 
         $driver = Driver::whereKey($data['driver_id'])
-            ->whereHas('company', fn ($q) =>
-            $q->where('user_id', auth()->id())
-            )
+            ->where('company_id', $company_id)
             ->whereHas('incidents', fn ($q) =>
             $q->where('id', $data['incident_id'])
             )
             ->firstOrFail();
-        $data['company_id'] = $driver->company_id;
+        $data['company_id'] = $company_id;
 
-        return $this->safe(fn() => response()->success($this->service->store($data), Response::HTTP_CREATED));
+        return $this->safe(fn() => response()->success($this->service->store($data, $company_id), Response::HTTP_CREATED));
     }
 
     // Update an existing claim
