@@ -119,7 +119,7 @@ class Driver extends Authenticatable
 
     public function address()
     {
-        return $this->hasOne(DriverAddress::class);
+        return $this->hasOne(DriverAddress::class)->where('currently_live',true);
     }
 
     public function licenses()

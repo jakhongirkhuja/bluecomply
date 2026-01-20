@@ -23,6 +23,7 @@ class GetDriverDetailRequest extends FormRequest
     public function rules(): array
     {
         $categoryMap = [
+            'application'=>['all'],
             'notes' => ['manual', 'completed'],
             'tasks' => ['onboarding', 'compliance', 'completed'],
             'documents' => ['1','2','3','4','5'],

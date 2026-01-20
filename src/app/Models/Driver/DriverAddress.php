@@ -2,7 +2,9 @@
 
 namespace App\Models\Driver;
 
+use App\Models\General\States;
 use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class DriverAddress extends Model
 {
@@ -23,4 +25,7 @@ class DriverAddress extends Model
         'move_out'       => 'datetime',
         'currently_live'=> 'boolean',
     ];
+    public function states(){
+        return $this->belongsTo(States::class,'state_id','id');
+    }
 }

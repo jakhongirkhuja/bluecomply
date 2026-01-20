@@ -145,6 +145,13 @@ class ApplicationService
 
         return DB::transaction(function () use ($data, $driver) {
 
+            if ((int) $data['currently_live'] === 1) {
+                DriverAddress::where('driver_id', $driver->id)
+                    ->when(!empty($data['id']), function ($q) use ($data) {
+                        $q->where('id', '!=', $data['id']);
+                    })
+                    ->update(['currently_live' => 0]);
+            }
             if (!empty($data['id'])) {
                 $driverAddress = DriverAddress::where('id', $data['id'])
                     ->where('driver_id', $driver->id)
@@ -196,6 +203,9 @@ class ApplicationService
                     ->firstOrFail();
                 $document->update($payload);
             } else {
+                Document::where('driver_id', $driver->id)
+                    ->where('document_type_id', $documentType->id)
+                    ->update(['current' => false]);
                 $payload['current'] = true;
                 $document = Document::create($payload);
             }

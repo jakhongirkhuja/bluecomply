@@ -17,6 +17,7 @@ use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\Company\AnalyticController;
 use App\Http\Controllers\Company\ProfileController;
 use App\Http\Controllers\Company\NotificationController;
+use App\Http\Controllers\Company\MessageController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -67,6 +68,10 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
         Route::post('change-status', [CompanyDriverController::class, 'drivers_change_status']);
         Route::post('review/{id}', [CompanyDriverController::class, 'drivers_review']);
         Route::post('change-profile', [CompanyDriverController::class, 'drivers_change_profile']);
+
+        Route::get('messages/{id}', [MessageController::class, 'messages']);
+        Route::post('messages/{id}', [MessageController::class, 'messagePost']);
+
     });
 
 

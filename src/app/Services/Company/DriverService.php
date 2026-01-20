@@ -33,10 +33,29 @@ class DriverService
 {
     public function getDriverDetails($driverId, $data,$company_id)
     {
-
-        $driver = Driver::findOrFail($driverId);
         $response = null;
-        if ($data['category'] == 'tasks') {
+        if($data['category']=='application'){
+            $driver = Driver::with([
+                'personal_information',
+                'address',
+                'employmentPeriods',
+                'licenses' => function ($query) {
+                    $query->where('current', true)
+                        ->orderByDesc('created_at');
+                }
+            ])->findOrFail($driverId);
+            $response['personal_information'] = $driver->personal_information;
+            $response['address'] = $driver->address;
+            $response['licenses'] = $driver->licenses;
+            $response['driving_experiences'] = $driver->driving_experiences;
+            $response['employmentPeriods'] = $driver->employmentPeriods;
+        }else{
+            $driver = Driver::findOrFail($driverId);
+        }
+
+        if($data['category']=='application'){
+            $response['personal_information'] = $driver->personal_information;
+        }elseif ($data['category'] == 'tasks') {
 
             $response = Task::with(['assigneed'])->where('driver_id', $driver->id)
                 ->where('category', $data['under_category'])
@@ -318,6 +337,7 @@ class DriverService
 
         return DB::transaction(function () use ($data, $request) {
             $driver = Driver::where('employee_id', $data['employee_id'])->first();
+
             $document = Document::where('driver_id', $driver->id)->where('document_type_id', $data['type_id'])->firstorfail();
             if ($data['type_id'] >= 1 && $data['type_id'] <= 3) {
                 $this->storeFiles($document, $data['file'], $data['side']);
@@ -382,7 +402,7 @@ class DriverService
         return DB::transaction(function () use ($data) {
 
             $driver = Driver::findOrFail($data['driver_id']);
-            if ($data['status'] == 'rehire') {
+            if ($data['status'] == 'rehire' || $data['status'] == 'hire') {
                 if ($data['send'] == 1) {
                     // send email with phone
                 }
@@ -401,6 +421,7 @@ class DriverService
                     ]);
                 }
             }
+
             $driver->update([
                 'status' => $data['status'],
                 'hired_at' => $data['hired_at'] ?? null,

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DriverStatusChangeRequest extends FormRequest
+class MessageHistorySentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,9 @@ class DriverStatusChangeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'driver_id' => 'required|exists:drivers,id',
-            'status'=>'required|string|in:active,home,do_not_dispatch,rehire,initial_review,screening,hire',
-            'hired_at'=>'required_if:status,rehire|date|date_format:Y-m-d',
-            'send' =>'required_if:status,rehire|numeric|between:0,1',
+            'message'=>'required|string|max:255',
+            'files' =>'nullable|array',
+            'files.*' => ['file','mimes:pdf,png,jpg,jpeg','max:10048'],
         ];
     }
 }

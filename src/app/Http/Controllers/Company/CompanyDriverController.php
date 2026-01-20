@@ -92,6 +92,7 @@ class CompanyDriverController extends Controller
     public function getDrivers(GetStatusRequest $request,$company_id){
 
         $filter = $request->filter ?? 'all';
+        $category = $request->category;
         $search = $request->search;
         $cacheKey = "drivers.company:{$company_id}";
         $per_page = $request->per_page ?? 100;
@@ -99,7 +100,7 @@ class CompanyDriverController extends Controller
             Cache::forget($cacheKey);
         }
 
-        $drivers = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($request, $company_id,$filter, $per_page, $search) {
+        $drivers = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($request, $company_id,$filter, $per_page, $search, $category) {
 
             $now  = now();
             $soon = now()->addDays(30);
@@ -108,9 +109,11 @@ class CompanyDriverController extends Controller
                 ->where('company_id', $company_id)
 
                 ->when($filter == 'do_not_dispatch', function ($query) {
-                    $query->where('do_not_dispatch', true);
+                    $query->where('status','do_not_dispatch');
                 })
-
+                ->when($category, function ($query) use ($category) {
+                    $query->where('status',$category);
+                })
                 ->when($filter == 'expired_documents', function ($query) use ($now) {
                     $query->whereExists(function ($sub) use ($now) {
                         $sub->selectRaw(1)

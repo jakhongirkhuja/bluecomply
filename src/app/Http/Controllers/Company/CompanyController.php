@@ -99,7 +99,18 @@ class CompanyController extends Controller
             }else{
                 $data['plan_id'] = null;
             }
+            if(isset($data['file'])){
+                $file = $data['file'];
+                $path = $file->storeAs(
+                    'company-logo',
+                    Str::orderedUuid().rand(1,500).'.'.$file->getClientOriginalExtension(),
+                    'public'
+                );
+                $data['logo'] = $path;
+            }
+
             $company = Company::create($data);
+
             return response()->success($company, Response::HTTP_CREATED);
         });
 
