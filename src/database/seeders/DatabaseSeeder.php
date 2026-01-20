@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             EndorsementSeeder::class,
             EquipmentSeeder::class,
             VehicleSubcategorySeeder::class,
+            NotificationSeeder::class,
 
         ]);
     }

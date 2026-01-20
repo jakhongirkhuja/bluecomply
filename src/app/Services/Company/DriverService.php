@@ -13,6 +13,7 @@ use App\Models\Company\Note;
 use App\Models\Company\RandomPoolMembership;
 use App\Models\Company\RandomSelection;
 use App\Models\Company\Rejection;
+use App\Models\Company\SavedFilter;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
 use App\Models\Driver\EmploymentPeriod;
@@ -222,7 +223,7 @@ class DriverService
             'type_id' => 'required|numeric|exists:document_types,id',
             'cdl_class_id' => 'required_if:type_id,1|numeric|exists:cdlclasses,id',
             'number' => 'required',
-//            'state_id' => 'required|exists:states,id',
+            'state_id' => 'required|exists:states,id',
             'expires_at' => 'required|date_format:Y-m-d',
             'restrictions' => 'nullable|array',
             'restrictions.*' => 'string',
@@ -231,7 +232,7 @@ class DriverService
             'twic_card' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:10048',
         ]);
 
-        $data['state_id'] = 1;
+//        $data['state_id'] = 1;
 
 
         return DB::transaction(function () use ($data, $request) {
@@ -275,14 +276,14 @@ class DriverService
             'address' => 'required|string',
             'house' => 'required|string',
 //            'city_id' => 'required|string|exists:cities,id',
-//            'state_id' => 'required|string|exists:states,id',
+            'state_id' => 'required|string|exists:states,id',
             'zip' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|string',
         ]);
         $data['country_id'] = 1;
         $data['city_id'] = 1;
-        $data['state_id'] = 1;
+//        $data['state_id'] = 1;
         return DB::transaction(function () use ($data) {
             $driver = Driver::where('employee_id', $data['employee_id'])->first();
             $driver->address()->create([
@@ -459,5 +460,20 @@ class DriverService
         });
 
 
+    }
+    public function saveFilter($data, $company_id)
+    {
+        return SavedFilter::updateOrCreate(
+            ['id' => $data['id'] ?? null],
+            array_filter([
+                'company_id' => $company_id,
+                'name'       => $data['name'] ?? null,
+                'filters'    => $data['filters'],
+            ], fn ($v) => !is_null($v))
+        );
+    }
+    public function updateFilterName($data,$savedFilter, $company_id)
+    {
+        return $savedFilter->update($data);
     }
 }

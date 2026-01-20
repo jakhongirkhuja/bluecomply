@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('company_name');
             $table->string('tenet_id')->unique();
             $table->string('dot_number')->unique();
+            $table->text('logo')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->text('status')->default('active');
             $table->string('der_name')->nullable();

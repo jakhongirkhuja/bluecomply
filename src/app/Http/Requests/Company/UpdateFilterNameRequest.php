@@ -4,7 +4,7 @@ namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetStatusRequest extends FormRequest
+class UpdateFilterNameRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,7 @@ class GetStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status'=>'nullable|string|in:dispatch,expired,expiring,mission',
+            'name' => 'required|string|max:255',
         ];
-    }
-    public function validationData()
-    {
-        return $this->query();
     }
 }

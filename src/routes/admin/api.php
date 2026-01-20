@@ -16,6 +16,6 @@ Route::prefix('v1/admin')->middleware(['auth:sanctum'])->group(function () { //a
     Route::delete('companies/{companies}/delete-user/{id}', [CompanyController::class, 'deleteUser']);
 
     Route::get('analytics', [AdminController::class, 'analytics']);
-
+    Route::get('logout', [AdminController::class, 'adminLogout']);
 
 });

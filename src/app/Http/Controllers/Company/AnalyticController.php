@@ -357,4 +357,103 @@ class AnalyticController extends Controller
         });
         return response()->success($data);
     }
+
+    public function compliance($companyId){
+        $now = now();
+        $soon = now()->copy()->addDays(30);
+        $page = request()->get('page', 1);
+        $search = request()->get('search');
+        $cacheKey = "documents:company:$companyId:page:$page:"
+            . "status:" . request()->status
+            . ":type:" . request()->type
+            . ":sort:" . request()->sort
+            . ":day_range:" . request()->day_range
+            . ":search:" . $search;
+
+        $documents = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($companyId, $now, $soon, $search) {
+
+            $query = Document::query()
+                ->select('documents.*')->where('documents.company_id', $companyId)
+                ->join('drivers', 'drivers.id', '=', 'documents.driver_id')
+                ->join('document_types', 'document_types.id', '=', 'documents.document_type_id');
+
+
+            if (request()->status == 'missing') {
+                $query->whereNotExists(function ($sub) {
+                    $sub->selectRaw(1)
+                        ->from('document_files')
+                        ->whereColumn('document_files.document_id', 'documents.id');
+                });
+            }
+
+            if (request()->status == 'expired') {
+                $query->where('expires_at', '<', $now);
+            }
+
+            if (request()->status == 'expired_soon') {
+                $query->whereBetween('expires_at', [$now, $soon]);
+            }
+
+            if (request()->status == 'pending') {
+                $query->where('status', 'pending');
+            }
+
+            if (request()->type) {
+                $query->where('document_type_id', request()->type);
+            }
+
+            if (request()->day_range == '0-7') {
+                $query->whereBetween('expires_at', [$now, $now->copy()->addDays(7)]);
+            }
+            if (request()->day_range == '8-30') {
+                $query->whereBetween('expires_at', [$now->copy()->addDays(8), $now->copy()->addDays(30)]);
+            }
+            if (request()->day_range == '31-60') {
+                $query->whereBetween('expires_at', [$now->copy()->addDays(31), $now->copy()->addDays(60)]);
+            }
+            if (request()->day_range == '90') {
+                $query->where('expires_at', '>=', $now->copy()->addDays(90));
+            }
+            if (request()->day_range == 'expired') {
+                $query->where('expires_at', '<', $now);
+            }
+
+            $query->where(function ($q) use ($now, $soon) {
+                $q->where('expires_at', '<', $now)
+                    ->orWhereBetween('expires_at', [$now, $soon])
+                    ->orWhereNotExists(function ($sub) {
+                        $sub->selectRaw(1)
+                            ->from('document_files')
+                            ->whereColumn('document_files.document_id', 'documents.id');
+                    });
+            });
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('drivers.first_name', 'LIKE', "%{$search}%")
+                        ->orWhere('document_types.name', 'LIKE', "%{$search}%")
+                        ->orWhere('documents.name', 'LIKE', "%{$search}%")
+                        ->orWhere('documents.number', 'LIKE', "%{$search}%");
+                });
+            }
+            if (request()->sort == 'expires_at_overdue') {
+                $query->orderByRaw("expires_at < ? DESC", [$now]);
+            }
+
+            if (request()->sort == 'driver_name') {
+                $query->orderBy('drivers.first_name');
+            }
+
+            if (request()->sort == 'type') {
+                $query->orderBy('document_type_id');
+            }
+
+            if (request()->sort == 'expires_at') {
+                $query->orderBy('expires_at');
+            }
+
+            return $query->simplePaginate(20);
+        });
+
+        return response()->success($documents);
+    }
 }

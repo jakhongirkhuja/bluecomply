@@ -25,4 +25,11 @@ class AdminController extends Controller
             ];
         });
     }
+    public function adminLogout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'message' => 'Logged out successfully, token revoked.'
+        ], 200);
+    }
 }

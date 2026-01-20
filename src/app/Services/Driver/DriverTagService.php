@@ -11,6 +11,7 @@ class DriverTagService
         $driverTag = [];
         foreach ($data['tag'] as $tag) {
             $driverTag[]= DriverTag::create([
+                'comapny_id' => $comapny_id,
                 'driver_id' => $data['driver_id'],
                 'tag'       => $tag,
                 'user_id'   => auth()->id()
@@ -21,6 +22,7 @@ class DriverTagService
 
     public function update(DriverTag $tag, array $data, $comapny_id): DriverTag
     {
+
         $data['user_id'] = auth()->id();
         $tag->update($data);
         return $tag;

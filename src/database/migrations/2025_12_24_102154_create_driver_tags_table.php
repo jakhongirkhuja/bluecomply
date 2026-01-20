@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('driver_tags', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('comapny_id');
             $table->unsignedBigInteger('driver_id');
             $table->unsignedBigInteger('user_id');
             $table->string('tag');

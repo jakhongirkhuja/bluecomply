@@ -23,7 +23,7 @@ class DriverStatusChangeRequest extends FormRequest
     {
         return [
             'driver_id' => 'required|exists:drivers,id',
-            'status'=>'required|string|in:active,home,donotdispatch,rehire',
+            'status'=>'required|string|in:active,home,do_not_dispatch,rehire',
             'hired_at'=>'required_if:status,rehire|date|date_format:Y-m-d',
             'send' =>'required_if:status,rehire|numeric|between:0,1',
         ];

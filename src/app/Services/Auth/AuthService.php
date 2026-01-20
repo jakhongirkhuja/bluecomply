@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Models\Company\Company;
 use App\Models\Driver\Driver;
 use App\Models\Driver\EmploymentPeriod;
 use App\Models\Driver\LinkVerification;
@@ -68,6 +69,9 @@ class AuthService
                         $token = $user->createToken('driver-token')->plainTextToken;
                         $d['token'] = $token;
                         $d['role_id'] = $user->role_id;
+                        $d['email'] = $user->email;
+                        $d['name'] = $user->name;
+                        $d['company'] = Company::select('id','company_name','tenet_id')->where('user_id', $user->id)->first();
                         return $d;
                     })
                 ]);

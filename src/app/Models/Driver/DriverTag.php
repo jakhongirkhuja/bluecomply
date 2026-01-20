@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DriverTag extends Model
 {
     protected $fillable = [
+        'comapny_id',
         'driver_id',
         'tag',
         'user_id'

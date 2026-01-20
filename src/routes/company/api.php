@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Company\DrugTestOrderController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\Company\AnalyticController;
-
+use App\Http\Controllers\Company\ProfileController;
+use App\Http\Controllers\Company\NotificationController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -33,11 +34,21 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
 
 
 
+
     Route::prefix('drivers')->group(function () {
         Route::get('', [CompanyDriverController::class, 'getDrivers']);
+        Route::get('count', [CompanyDriverController::class, 'countDrivers']);
+
+        Route::get('save-filters', [CompanyDriverController::class, 'saveFilterList']);
+        Route::post('save-filters', [CompanyDriverController::class, 'saveFilter']);
+        Route::delete('save-filters/{id}', [CompanyDriverController::class, 'saveFilterDelete']);
+        Route::put('save-filters/{id}', [CompanyDriverController::class, 'updateFilterName']);
+        Route::put('save-filters-name/{id}', [CompanyDriverController::class, 'updateFilterName']);
+
         Route::apiResource('claims', ClaimController::class)->only(['show','store', 'destroy']);
         Route::apiResource('documents', DriverDocumentController::class)->only(['store', 'destroy']);
         Route::apiResource('incidents', IncidentController::class);  //put for accident and other demage
+
         Route::put('incidents/{incident}/other-incidents', [IncidentController::class, 'createOtherIncidents']); // put for other-incidents
         Route::put('incidents/{incident}/citations', [IncidentController::class, 'createCitation']); // put for citation
         Route::put('incidents/{incident}/inspections', [IncidentController::class, 'createRoadsideInspection']); // put for citation
@@ -60,10 +71,23 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
 
 
 
-    Route::prefix('analytics')->middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('analytics')->group(function () {
         Route::get('', [AnalyticController::class, 'getAnalytics']);
+        Route::get('compliance', [AnalyticController::class, 'compliance']);
     });
 
+
+    Route::prefix('profile')->group(function () {
+        Route::put('edit', [ProfileController::class, 'profileEdit']);
+        Route::get('companies', [ProfileController::class, 'profileCompanies']);
+        Route::get('logout', [ProfileController::class, 'profileLogout']);
+    });
+
+    Route::prefix('notifications')->group(function () {
+        Route::get('', [NotificationController::class, 'notifications']);
+        Route::get('markAsRead/{id}', [NotificationController::class, 'markAsRead']);
+        Route::get('countNotifications/', [NotificationController::class, 'countNotifications']);
+    });
 });
 
 
