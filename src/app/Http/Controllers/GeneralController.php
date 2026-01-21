@@ -11,11 +11,15 @@ use App\Models\Company\InspectionLevel;
 use App\Models\Company\RejectionReason;
 use App\Models\Company\Role;
 use App\Models\Company\ViolationCategory;
+use App\Models\Driver\Vehicle;
 use App\Models\General\Cities;
 use App\Models\General\DamageCategory;
 use App\Models\General\EndorsementType;
 use App\Models\General\EquipmentType;
 use App\Models\General\States;
+use App\Models\General\VehicleDocumentType;
+use App\Models\General\VehicleInsuranceType;
+use App\Models\General\VehicleMaintenanceType;
 use App\Models\General\VehicleType;
 use Illuminate\Http\Request;
 
@@ -39,8 +43,12 @@ class GeneralController extends Controller
             'rejection-reason',
             'violation-categories',
             'drug-test-reasons',
+            'vehicles',
             'vehicle_types',
-            'roles'
+            'roles',
+            'vehicle_document_types',
+            'vehicle_insurance_types',
+            'vehicle_maintenance_types',
         ];
 
         if (!in_array($type, $allowed)) {
@@ -135,4 +143,18 @@ class GeneralController extends Controller
     {
         return VehicleType::all();
     }
+    private function vehicleDocumentTypes()
+    {
+        return VehicleDocumentType::all();
+    }
+    private function vehicleInsuranceTypes()
+    {
+        return VehicleInsuranceType::all();
+    }
+    private function vehicleMaintenanceTypes()
+    {
+        return VehicleMaintenanceType::all();
+    }
+
+
 }

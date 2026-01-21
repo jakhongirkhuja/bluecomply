@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->string('adjuster_name')->nullable();
             $table->string('adjuster_contact')->nullable();
 
-            $table->enum('status', ['Open', 'Reviewing', 'Paid', 'Denied', 'Closed'])->default('Open');
+
             $table->decimal('deductible_amount', 10, 2)->default(0);
             $table->decimal('insurance_paid', 10, 2)->default(0);
             //  end Liability, Physical Damage, Cargo, Subrogation, Trailer Interchange, Other

@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->text('type');//['Truck','Trailer','Cargo','Equipment','Other']
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('type_id');
             $table->string('unit_number')->nullable();
+            $table->string('status')->default('active'); //active.inactive,maintenance,out_of_service
             $table->string('make')->nullable();
-            $table->string('vin')->nullable();
+            $table->string('model')->nullable();
+            $table->integer('year')->nullable();
+            $table->string('vin')->unique()->nullable();
             $table->string('plate')->nullable();
-            $table->string('plate_state')->nullable();
+            $table->unsignedBigInteger('state_id')->nullable();
+            $table->timestamp('expire_at')->nullable();
+            $table->timestamp('inspection_at')->nullable();
+
             $table->timestamps();
         });
     }

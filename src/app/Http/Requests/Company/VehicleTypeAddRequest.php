@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Driver;
+namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DriverLoginRequest extends FormRequest
+class VehicleTypeAddRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class DriverLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'primary_phone' => 'required',
-            'company_token'=>'required|uuid|exists:registration_links,token',
+            'name'=>'required|string|max:255',
         ];
     }
 }

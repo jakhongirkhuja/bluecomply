@@ -170,7 +170,7 @@ class DriverService
         $data = $request->validate([
             'first_name' => 'required|string',
             'middle_name' => 'nullable|string',
-            'email' => 'nullable|email',
+            'email' => 'nullable|email|unique:personal_information,email',
             'last_name' => 'required|string',
             'ssn_sin' => 'nullable|string|unique:personal_information,ssn_sin',
             'date_of_birth' => 'required|date_format:Y-m-d',
@@ -191,7 +191,7 @@ class DriverService
                 'last_name' => $data['last_name'],
                 'date_of_birth' => $data['date_of_birth'],
                 'position_dot' => $data['position_dot'],
-                'company_id' => $company->id
+                'company_id' => $company->id,
             ]);
             $driver->personal_information()->create([
                 'first_name' => $data['first_name'],
@@ -214,6 +214,7 @@ class DriverService
                 'number' => null,
                 'expires_at' => $data['med_expire_date'] ?? null,
                 'current' => true,
+                'company_id' => $company->id,
                 'uploaded_by' => 'admin',
                 'status' => isset($validate['med_expire_date']) &&
                 now()->gt($validate['med_expire_date']) ? 'expired' : 'valid',
@@ -266,6 +267,7 @@ class DriverService
                 'number' => $data['number'] ?? null,
                 'expires_at' => $data['expires_at'] ?? null,
                 'current' => true,
+                'company_id' => $driver->company_id,
                 'cdl_class_id' => $data['cdl_class_id'] ?? null,
                 'uploaded_by' => auth()->user()?->role === 'admin' ? 'admin' : 'driver',
                 'status' => isset($validate['expires_at']) &&
@@ -281,7 +283,10 @@ class DriverService
                 $endorsement->twic_card_path = $path;
                 $endorsement->save();
             }
-            Document::create($payload);
+            if($data['type_id']!=4){
+                Document::create($payload);
+            }
+
             return $driver->employee_id;
         });
 
@@ -298,13 +303,17 @@ class DriverService
             'state_id' => 'required|string|exists:states,id',
             'zip' => 'required|string',
             'email' => 'required|email',
-            'phone' => 'required|string',
+            'phone' => 'required|digits_between:10,15',
         ]);
         $data['country_id'] = 1;
         $data['city_id'] = 1;
+//        $drivers = Driver::where('company_id', $data['company_id'])
+//        if()
 //        $data['state_id'] = 1;
-        return DB::transaction(function () use ($data) {
-            $driver = Driver::where('employee_id', $data['employee_id'])->first();
+        $driver = Driver::where('employee_id', $data['employee_id'])->first();
+
+        return DB::transaction(function () use ($data,$driver) {
+
             $driver->address()->create([
                 'country_id' => $data['country_id'],
                 'address' => $data['address'],
@@ -320,6 +329,7 @@ class DriverService
             ]);
 
             $driver->primary_phone = $data['phone'];
+            $driver->status = 'active';
             $driver->save();
             return $driver->employee_id;
         });

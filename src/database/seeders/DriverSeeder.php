@@ -17,8 +17,8 @@ class DriverSeeder extends Seeder
 
         for ($i = 0; $i < 70; $i++) {
             Driver::create([
-                'primary_phone' => '+1' . $this->faker->unique()->numerify('##########'),
-                'status'        => true,
+                'primary_phone' => $this->faker->unique()->numerify('##########'),
+                'status'        => 'active',
                 'company_id'    => 2,
 
                 'first_name'    => $this->faker->firstName,

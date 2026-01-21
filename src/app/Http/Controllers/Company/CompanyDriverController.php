@@ -112,7 +112,9 @@ class CompanyDriverController extends Controller
                     $query->where('status','do_not_dispatch');
                 })
                 ->when($category, function ($query) use ($category) {
-                    $query->where('status',$category);
+                    $query->where('status', $category);
+                }, function ($query) {
+                    $query->where('status', 'active');
                 })
                 ->when($filter == 'expired_documents', function ($query) use ($now) {
                     $query->whereExists(function ($sub) use ($now) {
@@ -173,7 +175,17 @@ class CompanyDriverController extends Controller
     }
     public function addDriver(DriverTypeCheckRequest $request, $company_id)
     {
-        return $this->safe(fn() => response()->success($this->service->addDriver($request->validated(), $request, $company_id),Response::HTTP_CREATED));
+        $data = $request->validated();
+
+        if($data['type']=='address'){
+            $d= $request->only('phone');
+            $emp = $request->only('employee_id');
+            $checkDriver = Driver::where('primary_phone', $d)->where('employee_id','!=' ,$emp)->exists();
+            if($checkDriver){
+                return response()->error('Driver already exists', Response::HTTP_NOT_FOUND);
+            }
+        }
+        return $this->safe(fn() => response()->success($this->service->addDriver($data, $request, $company_id),Response::HTTP_CREATED));
     }
     public function addTask(StoreTaskRequest $request, $company_id)
     {

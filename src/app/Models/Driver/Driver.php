@@ -139,7 +139,7 @@ class Driver extends Authenticatable
 
     public function med()
     {
-        return $this->hasOne(MedDetail::class)->where('current', true);
+        return $this->hasOne(Document::class)->where('document_type_id',4)->where('current', true);
     }
 
     public function drugTestes()

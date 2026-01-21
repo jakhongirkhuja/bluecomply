@@ -39,7 +39,10 @@ class MessageController extends Controller
                 'message' => $data['message'],
                 'status' => 'sent',
             ]);
-            $this->storeFiles($message, $data['files'], $data['type'] ?? null);
+            if(isset($data['files'])){
+                $this->storeFiles($message, $data['files'], $data['type'] ?? null);
+            }
+
 
             //send sms
             return response()->success($message);
@@ -47,7 +50,7 @@ class MessageController extends Controller
 
     }
     public function messages( $companyId,$id){
-        $message = MessageHistory::with('attachments')->where('company_id',$companyId)->where('sender_id',$id)->latest()->limit(10)->get();
+        $message = MessageHistory::with('attachments')->where('company_id',$companyId)->where('driver_id',$id)->latest()->limit(10)->get();
         return response()->success($message);
     }
     protected function storeFiles(MessageHistory $message, array $files, $type=null): void

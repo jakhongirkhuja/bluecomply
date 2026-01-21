@@ -4,10 +4,9 @@ namespace App\Models\General;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VehicleType extends Model
+class VehicleDocumentType extends Model
 {
-    protected $fillable =[
+    protected $fillable = [
         'name',
-        'company_id',
     ];
 }

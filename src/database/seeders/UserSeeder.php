@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
-            'phone' => '+1231231231',
+            'phone' => '1231231231',
             'password' => Hash::make('password123'),
             'role_id' => 1,
             'created_at' => $now,
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
         $user =  User::create([
             'name' => 'Company Owner Doe',
             'email' => 'company@example.com',
-            'phone' => '+12312312312',
+            'phone' => '12312312312',
             'password' => Hash::make('password123'),
             'role_id' => 2,
             'created_at' => $now,
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Safety Manager Smith',
                 'email' => 'safety@example.com',
-                'phone' => '+123123124231',
+                'phone' => '123123124231',
                 'password' => Hash::make('password123'),
                 'role_id' => 3,
                 'created_at' => $now,
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Manager Alice',
                 'email' => 'driver1@example.com',
-                'phone' => '+123123122331',
+                'phone' => '123123122331',
                 'password' => Hash::make('driver123'),
                 'role_id' => 3,
                 'created_at' => $now,
@@ -58,7 +58,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Manager Bob',
                 'email' => 'driver2@example.com',
-                'phone' => '+123123123551',
+                'phone' => '123123123551',
                 'password' => Hash::make('driver123'),
                 'role_id' => 3,
                 'created_at' => $now,
@@ -67,7 +67,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Manager Charlie',
                 'email' => 'driver3@example.com',
-                'phone' => '+123123123231',
+                'phone' => '123123123231',
                 'password' => Hash::make('driver123'),
                 'role_id' => 3,
                 'created_at' => $now,

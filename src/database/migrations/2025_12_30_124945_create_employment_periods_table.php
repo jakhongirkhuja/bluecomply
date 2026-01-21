@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->boolean('notify_driver')->default(false);
             $table->date('payed_date')->nullable();
-            $table->foreignId('created_by')->constrained('users');
+            $table->unsignedBigInteger('created_by')->constrained('users');
             $table->timestamps();
         });
     }

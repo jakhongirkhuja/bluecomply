@@ -555,7 +555,7 @@ class ApplicationService
                 $data['info']['DOT Application']['info'] = $missing;
             }
 
-            $documentCheck = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 4)->first();
+            $documentCheck = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 4)->where('current',true)->first();
             $data['info']['Medical Certificate']['status'] = $documentCheck? true : false;
 
             if(!$documentCheck){
@@ -565,6 +565,8 @@ class ApplicationService
                 $data['info']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
                 $data['files']['Medical Certificate']['info'] = ['Missing Medical Certificate files'];
             }else{
+                $data['info']['Medical Certificate']['status'] = true;
+                $data['info']['Medical Certificate']['type_id'] = 4;
                 if($documentCheck->files()->count() > 0){
                     $data['files']['Medical Certificate']['status'] = true;
                     $data['info']['Medical Certificate']['info'] = ['Missing Medical Certificate Information'];
@@ -573,7 +575,7 @@ class ApplicationService
 
             $mission2 = [];
             $mission2File = [];
-            $cdlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 1)->first();
+            $cdlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 1)->where('current',true)->first();
             if(!$cdlexist){
 
                 $data['info']['License (CDL)']['status'] = false;
@@ -584,14 +586,15 @@ class ApplicationService
                 $data['files']['License (CDL)']['info'] =['CDL front and back'];
 
             }else{
-
+                $data['info']['License (CDL)']['status'] = true;
+                $data['info']['License (CDL)']['type_id'] = 1;
                 if($cdlexist->files->count() == 0){
                     $data['files']['License (CDL)']['status'] = false;
                     $data['files']['License (CDL)']['type_id'] = 1;
                     $data['files']['License (CDL)']['info'] =['CDL front and back'];
                 }
             }
-            $dlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 2)->first();
+            $dlexist = Document::with('files')->where('driver_id', $user_id)->where('document_type_id', 2)->where('current',true)->first();
             if(!$dlexist){
                 $data['info']['License (DL)']['status'] = false;
                 $data['info']['License (DL)']['info'] = ['Missing Driver License (DL) Information'];
@@ -600,6 +603,8 @@ class ApplicationService
                 $data['info']['License (DL)']['type_id'] = 4;
                 $data['files']['License (DL)']['info'] =['DL front and back'];
             }else{
+                $data['info']['License (DL)']['status'] = true;
+                $data['info']['License (DL)']['type_id'] = 2;
                 if($dlexist->files->count() == 0){
                     $data['files']['License (DL)']['status'] = false;
                     $data['files']['License (DL)']['type_id'] = 2;
@@ -608,11 +613,7 @@ class ApplicationService
                 }
             }
 
-            $data['info']['Driver License']['status'] = count($mission2)>0? false : true;
-            if(count($mission2)>0){
-                $data['info']['Driver License']['info'] = $mission2;
 
-            }
 
 
 

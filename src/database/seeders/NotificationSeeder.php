@@ -34,13 +34,12 @@ class NotificationSeeder extends Seeder
 
                 $company = $companies->random();
                 $driver = $drivers->random();
-                $document = $documents->random();
+                $document = $documents->isNotEmpty() ? $documents->random()->id : null;
 
                 Notification::create([
                     'user_id' => $user->id,
                     'company_id' => $company->id,
                     'driver_id' => $driver->id,
-                    'document_id' => $document->id,
                     'type' => ['compliance','drug_test','dq_file','easy_ev'][array_rand(['compliance','drug_test','dq_file','easy_ev'])],
                     'title' => $this->randomTitle(),
                     'message' => $this->randomMessage(),

@@ -14,17 +14,11 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::updateOrCreate(
-            ['id' => 1],
-            ['name' => 'Super Admin', 'slug' => 'super-admin']
-        );
 
-        Role::updateOrCreate(
-            ['id' => 2],
-            ['name' => 'Company Owner', 'slug' => 'company-owner']
-        );
 
         $roles = [
+            ['name' => 'Super Admin', 'slug' => 'super-admin'],
+            ['name' => 'Company Owner', 'slug' => 'company-owner'],
             ['slug' => 'operations-manager', 'name' => 'Operations Manager'],
             ['slug' => 'fleet-manager', 'name' => 'Fleet Manager'],
             ['slug' => 'dispatcher', 'name' => 'Dispatcher'],

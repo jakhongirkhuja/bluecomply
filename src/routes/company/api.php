@@ -18,6 +18,7 @@ use App\Http\Controllers\Company\AnalyticController;
 use App\Http\Controllers\Company\ProfileController;
 use App\Http\Controllers\Company\NotificationController;
 use App\Http\Controllers\Company\MessageController;
+use App\Http\Controllers\Company\FleetController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -93,6 +94,28 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
         Route::get('markAsRead/{id}', [NotificationController::class, 'markAsRead']);
         Route::get('countNotifications/', [NotificationController::class, 'countNotifications']);
     });
+
+    Route::prefix('fleets')->group(function () {
+        Route::get('', [FleetController::class, 'getVehicles']);
+        Route::get('count', [FleetController::class, 'countVehicles']);
+        Route::post('vehicle/add', [FleetController::class, 'vehicleAdd']);
+        Route::post('vehicle/document/add/{vehicle_id}', [FleetController::class, 'documentAdd']);
+        Route::delete('vehicle/document/delete/{document_id}', [FleetController::class, 'documentDelete']);
+
+
+        Route::post('vehicle/document-insurance/add/{vehicle_id}', [FleetController::class, 'documentInsuranceAdd']);
+        Route::delete('vehicle/document-insurance/delete/{document_id}', [FleetController::class, 'documentInsuranceDelete']);
+
+
+        Route::post('vehicle/document-maintenance/add/{vehicle_id}', [FleetController::class, 'documentMaintenanceAdd']);
+        Route::delete('vehicle/document-maintenance/delete/{document_id}', [FleetController::class, 'documentMaintenanceDelete']);
+
+
+        Route::post('vehicle/type/add', [FleetController::class, 'vehicleAddType']);
+        Route::delete('vehicle/type/delete/{vehicle_id}', [FleetController::class, 'vehicleTypeDelete']);
+    });
+
+
 });
 
 

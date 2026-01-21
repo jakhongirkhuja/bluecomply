@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicle_types', function (Blueprint $table) {
+        Schema::create('vehicle_insurances', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->unsignedBigInteger('vehicle_id');
+            $table->unsignedBigInteger('vehicle_insurance_type_id');
             $table->unsignedBigInteger('company_id');
+            $table->text('description')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->boolean('current')->default(false);
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicle_types');
+        Schema::dropIfExists('vehicle_insurances');
     }
 };

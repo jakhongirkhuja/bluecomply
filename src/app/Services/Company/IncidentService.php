@@ -28,7 +28,8 @@ class IncidentService
                         'make' => $data['truck_make'],
                         'vin' => $data['truck_vin'],
                         'plate' => $data['truck_plate'],
-                        'plate_state' => $data['truck_plate_state_id'],
+                        'state_id' => $data['truck_plate_state_id'],
+                        'company_id' => $incident->company_id,
                     ]
                 );
                 $incident->truck_id = $truck->id;
@@ -45,7 +46,8 @@ class IncidentService
                         'make' => $data['trailer_make'],
                         'vin' => $data['trailer_vin'],
                         'plate' => $data['trailer_plate'],
-                        'plate_state' => $data['trailer_plate_state_id'],
+                        'state_id' => $data['trailer_plate_state_id'],
+                        'company_id' => $incident->company_id,
                     ]
                 );
                 $incident->trailer_id = $trailer->id;
