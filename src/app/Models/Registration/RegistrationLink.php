@@ -55,10 +55,10 @@ class RegistrationLink extends Model
         }
         $params['token'] = $this->token;
 
-//        $json = json_encode($params);
+        $json = json_encode($params);
 //        $base64 = base64_encode($json);
         $base64 = http_build_query($params);
-        return  url('/').'/api/v1/driver/'.$base64;
+        return  'https://blue-comply.7z7.uz/auth/register/'.$base64;
     }
     public function company(){
         return $this->belongsTo(Company::class);

@@ -97,6 +97,7 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
 
     Route::prefix('fleets')->group(function () {
         Route::get('', [FleetController::class, 'getVehicles']);
+        Route::get('details/{id}', [FleetController::class, 'getDetails']);
         Route::get('count', [FleetController::class, 'countVehicles']);
         Route::post('vehicle/add', [FleetController::class, 'vehicleAdd']);
         Route::post('vehicle/document/add/{vehicle_id}', [FleetController::class, 'documentAdd']);

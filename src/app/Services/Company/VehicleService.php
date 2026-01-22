@@ -271,4 +271,21 @@ class VehicleService
 
 
     }
+
+
+
+    public function getDetails($request, $company_id, $vehicle_id){
+        $matches = ['document','maintenance','insurance','events','logs'];
+        $type = $request->type;
+        if(!in_array($request->type,$matches)){
+            return response()->error('Type is not valid',404);
+        }
+        if($request->type=='document'){
+            $response = VehicleDocument::with('files')->where('company_id', $company_id)->where('vehicle_id', $vehicle_id)->get();
+        }elseif($request->type=='maintenance'){
+            $response = VehicleMaintenance::with('files')->where('company_id', $company_id)->where('vehicle_id', $vehicle_id)->get();
+        }elseif($request->type=='insurance'){
+            $response = VehicleInsurance::with('files')->where('company_id', $company_id)->where('vehicle_id', $vehicle_id)->get();
+        }
+    }
 }

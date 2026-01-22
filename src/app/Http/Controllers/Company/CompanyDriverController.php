@@ -99,65 +99,120 @@ class CompanyDriverController extends Controller
         if($request->per_page || $request->search ){
             Cache::forget($cacheKey);
         }
-
-        $drivers = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($request, $company_id,$filter, $per_page, $search, $category) {
-
             $now  = now();
             $soon = now()->addDays(30);
+        $drivers =Driver::with(['license', 'med', 'drugTest', 'vehicles','tags'])
+            ->where('company_id', $company_id)
 
-            return Driver::with(['license', 'med', 'drugTest', 'truck'])
-                ->where('company_id', $company_id)
+            ->when($filter == 'do_not_dispatch', function ($query) {
 
-                ->when($filter == 'do_not_dispatch', function ($query) {
-                    $query->where('status','do_not_dispatch');
-                })
-                ->when($category, function ($query) use ($category) {
-                    $query->where('status', $category);
-                }, function ($query) {
-                    $query->where('status', 'active');
-                })
-                ->when($filter == 'expired_documents', function ($query) use ($now) {
-                    $query->whereExists(function ($sub) use ($now) {
-                        $sub->selectRaw(1)
-                            ->from('documents')
-                            ->whereColumn('documents.driver_id', 'drivers.id')
-                            ->where('documents.expires_at', '<', $now);
-                    });
-                })
+                $query->where('status','do_not_dispatch');
+            })
+            ->when($category, function ($query) use ($category) {
+                $query->where('status', $category);
+            }, function ($query) {
+                $query->where('status', 'active');
+            })
+            ->when($filter == 'expired_documents', function ($query) use ($now) {
+                $query->whereExists(function ($sub) use ($now) {
+                    $sub->selectRaw(1)
+                        ->from('documents')
+                        ->whereColumn('documents.driver_id', 'drivers.id')
+                        ->where('documents.expires_at', '<', $now);
+                });
+            })
 
-                ->when($filter == 'expiring_documents', function ($query) use ($now, $soon) {
-                    $query->whereExists(function ($sub) use ($now, $soon) {
-                        $sub->selectRaw(1)
-                            ->from('documents')
-                            ->whereColumn('documents.driver_id', 'drivers.id')
-                            ->whereBetween('documents.expires_at', [$now, $soon]);
-                    });
-                })
+            ->when($filter == 'expiring_documents', function ($query) use ($now, $soon) {
+                $query->whereExists(function ($sub) use ($now, $soon) {
+                    $sub->selectRaw(1)
+                        ->from('documents')
+                        ->whereColumn('documents.driver_id', 'drivers.id')
+                        ->whereBetween('documents.expires_at', [$now, $soon]);
+                });
+            })
 
-                ->when($filter == 'missing_documents', function ($query) {
-                    $query->whereExists(function ($sub) {
-                        $sub->selectRaw(1)
-                            ->from('documents')
-                            ->whereColumn('documents.driver_id', 'drivers.id')
-                            ->whereNotExists(function ($sub2) {
-                                $sub2->selectRaw(1)
-                                    ->from('document_files')
-                                    ->whereColumn('document_files.document_id', 'documents.id');
-                            });
-                    });
-                })
-                ->when($search, function ($query) use ($search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('primary_phone', 'ILIKE', "%{$search}%")
-                            ->orWhere('first_name', 'ILIKE', "%{$search}%")
-                            ->orWhere('middle_name', 'ILIKE', "%{$search}%")
-                            ->orWhere('last_name', 'ILIKE', "%{$search}%");
-                    });
-                })
+            ->when($filter == 'missing_documents', function ($query) {
+                $query->whereExists(function ($sub) {
+                    $sub->selectRaw(1)
+                        ->from('documents')
+                        ->whereColumn('documents.driver_id', 'drivers.id')
+                        ->whereNotExists(function ($sub2) {
+                            $sub2->selectRaw(1)
+                                ->from('document_files')
+                                ->whereColumn('document_files.document_id', 'documents.id');
+                        });
+                });
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('primary_phone', 'ILIKE', "%{$search}%")
+                        ->orWhere('first_name', 'ILIKE', "%{$search}%")
+                        ->orWhere('middle_name', 'ILIKE', "%{$search}%")
+                        ->orWhere('last_name', 'ILIKE', "%{$search}%");
+                });
+            })
 
-                ->latest()
-                ->simplePaginate($per_page);
-        });
+            ->latest()
+            ->simplePaginate($per_page);
+//        $drivers = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($request, $company_id,$filter, $per_page, $search, $category) {
+//
+//            $now  = now();
+//            $soon = now()->addDays(30);
+//
+//            return Driver::with(['license', 'med', 'drugTest', 'truck'])
+//                ->where('company_id', $company_id)
+//
+//                ->when($filter == 'do_not_dispatch', function ($query) {
+//
+//                    $query->where('status','do_not_dispatch');
+//                })
+//                ->when($category, function ($query) use ($category) {
+//                    $query->where('status', $category);
+//                }, function ($query) {
+//                    $query->where('status', 'active');
+//                })
+//                ->when($filter == 'expired_documents', function ($query) use ($now) {
+//                    $query->whereExists(function ($sub) use ($now) {
+//                        $sub->selectRaw(1)
+//                            ->from('documents')
+//                            ->whereColumn('documents.driver_id', 'drivers.id')
+//                            ->where('documents.expires_at', '<', $now);
+//                    });
+//                })
+//
+//                ->when($filter == 'expiring_documents', function ($query) use ($now, $soon) {
+//                    $query->whereExists(function ($sub) use ($now, $soon) {
+//                        $sub->selectRaw(1)
+//                            ->from('documents')
+//                            ->whereColumn('documents.driver_id', 'drivers.id')
+//                            ->whereBetween('documents.expires_at', [$now, $soon]);
+//                    });
+//                })
+//
+//                ->when($filter == 'missing_documents', function ($query) {
+//                    $query->whereExists(function ($sub) {
+//                        $sub->selectRaw(1)
+//                            ->from('documents')
+//                            ->whereColumn('documents.driver_id', 'drivers.id')
+//                            ->whereNotExists(function ($sub2) {
+//                                $sub2->selectRaw(1)
+//                                    ->from('document_files')
+//                                    ->whereColumn('document_files.document_id', 'documents.id');
+//                            });
+//                    });
+//                })
+//                ->when($search, function ($query) use ($search) {
+//                    $query->where(function ($q) use ($search) {
+//                        $q->where('primary_phone', 'ILIKE', "%{$search}%")
+//                            ->orWhere('first_name', 'ILIKE', "%{$search}%")
+//                            ->orWhere('middle_name', 'ILIKE', "%{$search}%")
+//                            ->orWhere('last_name', 'ILIKE', "%{$search}%");
+//                    });
+//                })
+//
+//                ->latest()
+//                ->simplePaginate($per_page);
+//        });
 
         return response()->success($drivers);
     }

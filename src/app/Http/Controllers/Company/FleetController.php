@@ -21,7 +21,10 @@ class FleetController extends Controller
     public function __construct(protected VehicleService $service)
     {
     }
-
+    public function getDetails(Request $request, $companyId, $id)
+    {
+        return $this->service->getDetails($request, $companyId, $id);
+    }
     public function getVehicles(Request $request, $company_id){
 
         $status = $request->status;

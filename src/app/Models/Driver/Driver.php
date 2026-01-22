@@ -141,7 +141,10 @@ class Driver extends Authenticatable
     {
         return $this->hasOne(Document::class)->where('document_type_id',4)->where('current', true);
     }
-
+    public function tags()
+    {
+        return $this->hasMany(DriverTag::class);
+    }
     public function drugTestes()
     {
         return $this->hasMany(DrugTest::class);

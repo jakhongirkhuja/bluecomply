@@ -24,7 +24,7 @@ class AddUserToCompany extends FormRequest
         return [
             'name'=>'required',
             'email'=>'required|email|unique:users,email',
-            'phone'=>'required|unique:users,phone',
+            'phone'=>'required|numeric|unique:users,phone',
             'password'=>'required|min:5',
             'status' => 'required|in:active,inactive',
             'role_id' => [

@@ -41,7 +41,8 @@ class DatabaseSeeder extends Seeder
             EquipmentSeeder::class,
             VehicleSubcategorySeeder::class,
             NotificationSeeder::class,
-
+            DriverVehicleSeeder::class,
+            DriverTagSeeder::class,
         ]);
     }
 }
