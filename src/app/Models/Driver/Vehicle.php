@@ -2,6 +2,7 @@
 
 namespace App\Models\Driver;
 
+use App\Models\Company\Incident;
 use App\Models\Company\VehicleDocument;
 use App\Models\Company\VehicleInsurance;
 use App\Models\Company\VehicleMaintenance;
@@ -29,7 +30,7 @@ class Vehicle extends Model
 //    ];
     public function drivers()
     {
-        return $this->belongsToMany(Driver::class, 'driver_vehicles')->where('drivers.company_id', $this->company_id);
+        return $this->belongsToMany(Driver::class, 'driver_vehicles');
     }
     public function type(){
         return $this->belongsTo(VehicleType::class);
@@ -51,5 +52,16 @@ class Vehicle extends Model
     }
     public function registrations(){
         return $this->hasMany(VehicleDocument::class);
+    }
+    public function incidents(){
+        return $this->hasMany(Incident::class,'truck_id');
+    }
+    public function allIncidents()
+    {
+        return $this->hasMany(Incident::class, 'truck_id')
+        ->orWhere('trailer_id', $this->id);
+    }
+    public function incidentWithTrailer(){
+        return $this->hasMany(Incident::class,'trailer_id');
     }
 }

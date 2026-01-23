@@ -19,6 +19,7 @@ use App\Http\Controllers\Company\ProfileController;
 use App\Http\Controllers\Company\NotificationController;
 use App\Http\Controllers\Company\MessageController;
 use App\Http\Controllers\Company\FleetController;
+use App\Http\Controllers\Company\SafetyController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -65,6 +66,7 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
         Route::get('details/{id}', [CompanyDriverController::class, 'getDriverDetails']);
         Route::get('details/{id}/incidents/analytics', [CompanyDriverController::class, 'getDriverIncidentAnalytics']);
         Route::post('add-task', [CompanyDriverController::class, 'addTask']);
+        Route::post('assign-vehicle', [CompanyDriverController::class, 'assignVehicle']);
         Route::post('add-driver', [CompanyDriverController::class, 'addDriver']);
         Route::post('change-status', [CompanyDriverController::class, 'drivers_change_status']);
         Route::post('review/{id}', [CompanyDriverController::class, 'drivers_review']);
@@ -75,13 +77,10 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
 
     });
 
-
-
     Route::prefix('analytics')->group(function () {
         Route::get('', [AnalyticController::class, 'getAnalytics']);
         Route::get('compliance', [AnalyticController::class, 'compliance']);
     });
-
 
     Route::prefix('profile')->group(function () {
         Route::put('edit', [ProfileController::class, 'profileEdit']);
@@ -116,6 +115,21 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
         Route::delete('vehicle/type/delete/{vehicle_id}', [FleetController::class, 'vehicleTypeDelete']);
     });
 
+
+
+
+    Route::prefix('safety')->group(function () {
+        Route::get('inspections', [SafetyController::class, 'getInspections']);
+        Route::get('inspections/count', [SafetyController::class, 'getInspectionCounts']);
+        Route::get('incidents', [SafetyController::class, 'getIncidents']);
+        Route::get('incidents/count', [SafetyController::class, 'getIncidentCounts']);
+        Route::get('claims', [SafetyController::class, 'getClaims']);
+        Route::get('claims/count', [SafetyController::class, 'getClaimCounts']);
+        Route::get('citations', [SafetyController::class, 'getCitations']);
+
+
+
+    });
 
 });
 

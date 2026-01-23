@@ -36,42 +36,70 @@ class FleetController extends Controller
 
         $versionKey = "fleet:{$company_id}:version";
         $version = Cache::get($versionKey, 1);
+        $vehicles = Vehicle::with(['type','drivers', 'registration', 'inspection', 'insurance'])
+            ->where('company_id', $company_id)
+            ->when($type, fn($q) => $q->where('type_id', $type))
+            ->when($status, fn($q) => $q->where('status', $status))
+            ->when($search, fn($q) => $q->where('unit_number', 'like', "%{$search}%"))
+            ->when($document && $document !== 'all', function ($q) use ($document) {
+                $today = now();
 
+                $q->whereHas('documents', function ($q) use ($document, $today) {
+
+                    if ($document === 'valid') {
+                        $q->where('status', 'valid')
+                            ->whereDate('expire_at', '>', $today);
+                    }
+
+                    if ($document === 'expiring_soon') {
+                        $q->whereDate('expire_at', '<=', $today->copy()->addDays(30))
+                            ->whereDate('expire_at', '>=', $today);
+                    }
+
+                    if ($document === 'expired') {
+                        $q->where(function ($q) use ($today) {
+                            $q->whereDate('expire_at', '<', $today);
+                        });
+                    }
+
+                });
+            })
+            ->paginate($per_page);
         $cacheKey = "fleet:{$company_id}:v{$version}:type={$type}:status={$status}:doc={$document}:search={$search}:per={$per_page}:page={$page}";
 
-        $vehicles = Cache::remember($cacheKey, now()->addMinutes(5), function () use (
-            $company_id, $type, $status, $document, $search, $per_page
-        ) {
-            return Vehicle::with(['drivers', 'registration', 'inspection', 'insurance'])
-                ->where('company_id', $company_id)
-                ->when($type, fn($q) => $q->where('type_id', $type))
-                ->when($status, fn($q) => $q->where('status', $status))
-                ->when($search, fn($q) => $q->where('unit_number', 'like', "%{$search}%"))
-                ->when($document && $document !== 'all', function ($q) use ($document) {
-                    $today = now();
-
-                    $q->whereHas('documents', function ($q) use ($document, $today) {
-
-                        if ($document === 'valid') {
-                            $q->where('status', 'valid')
-                                ->whereDate('expire_at', '>', $today);
-                        }
-
-                        if ($document === 'expiring_soon') {
-                            $q->whereDate('expire_at', '<=', $today->copy()->addDays(30))
-                                ->whereDate('expire_at', '>=', $today);
-                        }
-
-                        if ($document === 'expired') {
-                            $q->where(function ($q) use ($today) {
-                                $q->whereDate('expire_at', '<', $today);
-                            });
-                        }
-
-                    });
-                })
-                ->paginate($per_page);
-        });
+//        $vehicles = Cache::remember($cacheKey, now()->addMinutes(5), function () use (
+//            $company_id, $type, $status, $document, $search, $per_page
+//        ) {
+//            return Vehicle::with(['drivers', 'registration', 'inspection', 'insurance'])
+//                ->where('company_id', $company_id)
+//                ->when($type, fn($q) => $q->where('type_id', $type))
+//                ->when($status, fn($q) => $q->where('status', $status))
+//                ->when($search, fn($q) => $q->where('unit_number', 'like', "%{$search}%"))
+//                ->when($document && $document !== 'all', function ($q) use ($document) {
+//                    $today = now();
+//
+//                    $q->whereHas('documents', function ($q) use ($document, $today) {
+//
+//                        if ($document === 'valid') {
+//                            $q->where('status', 'valid')
+//                                ->whereDate('expire_at', '>', $today);
+//                        }
+//
+//                        if ($document === 'expiring_soon') {
+//                            $q->whereDate('expire_at', '<=', $today->copy()->addDays(30))
+//                                ->whereDate('expire_at', '>=', $today);
+//                        }
+//
+//                        if ($document === 'expired') {
+//                            $q->where(function ($q) use ($today) {
+//                                $q->whereDate('expire_at', '<', $today);
+//                            });
+//                        }
+//
+//                    });
+//                })
+//                ->paginate($per_page);
+//        });
 
         return response()->success($vehicles);
 

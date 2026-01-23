@@ -23,7 +23,7 @@ class IncidentService
                 $truck = Vehicle::updateOrCreate(
                     ['id' => $incident->truck_id ?? null],
                     [
-                        'type' => 'Truck',
+                        'type_id' => 1,
                         'unit_number' => $data['truck_unit_number'],
                         'make' => $data['truck_make'],
                         'vin' => $data['truck_vin'],
@@ -41,7 +41,7 @@ class IncidentService
                 $trailer = Vehicle::updateOrCreate(
                     ['id' =>  $incident->trailer_id ?? null],
                     [
-                        'type' => 'Trailer',
+                        'type_id' => 2,
                         'unit_number' => $data['trailer_unit_number'],
                         'make' => $data['trailer_make'],
                         'vin' => $data['trailer_vin'],

@@ -41,4 +41,5 @@ class VehicleInsurance extends Model
     {
         return $this->hasMany(VehicleInsuranceFile::class);
     }
+
 }

@@ -275,7 +275,7 @@ class VehicleService
 
 
     public function getDetails($request, $company_id, $vehicle_id){
-        $matches = ['document','maintenance','insurance','events','logs'];
+        $matches = ['document','maintenance','insurance','events'];
         $type = $request->type;
         if(!in_array($request->type,$matches)){
             return response()->error('Type is not valid',404);
@@ -286,6 +286,9 @@ class VehicleService
             $response = VehicleMaintenance::with('files')->where('company_id', $company_id)->where('vehicle_id', $vehicle_id)->get();
         }elseif($request->type=='insurance'){
             $response = VehicleInsurance::with('files')->where('company_id', $company_id)->where('vehicle_id', $vehicle_id)->get();
+        }elseif($request->type=='events') {
+            $response = Incident::with('driver')->where('company_id', $company_id)->where('truck_id', $vehicle_id)->orwhere('trailer_id',$vehicle_id)->get();
         }
+        return response()->success($response);
     }
 }

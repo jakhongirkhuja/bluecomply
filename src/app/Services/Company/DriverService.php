@@ -152,6 +152,11 @@ class DriverService
         }
         return $task;
     }
+    public function assignVehicle($data){
+        $driver = Driver::find($data['driver_id']);
+        $driver->vehicles()->syncWithoutDetaching($data['vehicle_id']);
+        return $driver;
+    }
 
     public function addDriver($data, $request, $company_id)
     {

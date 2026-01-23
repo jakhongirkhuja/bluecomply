@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Requests\Company;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class AsignVehicleRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        $companyId = $this->route('company_id');
+
+        return [
+            'driver_id' => [
+                'required',
+                'numeric',
+                Rule::exists('drivers', 'id')->where(function ($query) use ($companyId) {
+                    return $query->where('company_id', $companyId);
+                }),
+            ],
+            'vehicle_id' => [
+                'required',
+                'numeric',
+                Rule::exists('vehicles', 'id')->where(function ($query) use ($companyId) {
+                    return $query->where('company_id', $companyId)->where('type_id',1);
+                }),
+            ],
+        ];
+    }
+}

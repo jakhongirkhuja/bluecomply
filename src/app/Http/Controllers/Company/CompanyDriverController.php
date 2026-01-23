@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Company\AsignVehicleRequest;
 use App\Http\Requests\Company\DriverProfileChangeRequest;
 use App\Http\Requests\Company\DriverReviewRequest;
 use App\Http\Requests\Company\DriverStatusChangeRequest;
@@ -16,6 +17,7 @@ use App\Models\Company\Company;
 use App\Models\Company\SavedFilter;
 use App\Models\Company\Task;
 use App\Models\Driver\Driver;
+use App\Models\Driver\Vehicle;
 use App\Services\Company\DriverService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -245,6 +247,11 @@ class CompanyDriverController extends Controller
     public function addTask(StoreTaskRequest $request, $company_id)
     {
         return $this->safe(fn() => response()->success($this->service->addTask($request, $company_id),Response::HTTP_CREATED));
+
+    }
+    public function assignVehicle(AsignVehicleRequest $request, $company_id)
+    {
+        return $this->safe(fn() => response()->success($this->service->assignVehicle($request->validated(), $company_id),Response::HTTP_CREATED));
 
     }
     public function drivers_change_status(DriverStatusChangeRequest $request){

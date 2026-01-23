@@ -38,7 +38,7 @@ class StoreIncidentBasicRequest extends FormRequest
             'truck_id'=>'required_if:truck,assets|numeric|exists:vehicles,id',
             'truck_unit_number'=>'required_if:truck,manual|string',
             'truck_make'=>'required_if:truck,manual|string',
-            'truck_vin'=>'required_if:truck,manual|string',
+            'truck_vin'=>'required_if:truck,manual|string|unique:vehicles,vin',
             'truck_plate'=>'required_if:truck,manual|string',
             'truck_plate_state_id'=>'required_if:truck,manual|numeric|exists:states,id',
 
