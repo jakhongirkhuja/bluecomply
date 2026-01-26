@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('incident_violations', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('incident_id');
+            $table->unsignedBigInteger('driver_id');
             $table->string('code');
             $table->string('unit');
             $table->string('description')->nullable();

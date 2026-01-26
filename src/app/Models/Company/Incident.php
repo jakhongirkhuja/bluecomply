@@ -3,8 +3,12 @@
 namespace App\Models\Company;
 
 use App\Models\Driver\Driver;
+use App\Models\Driver\Truck;
+use App\Models\Driver\Vehicle;
+use App\Models\General\States;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class Incident extends Model
 {
@@ -81,7 +85,8 @@ class Incident extends Model
         'report_number',
         'shipper_name',
         'inspection_level_id',
-        'accident_related'
+        'accident_related',
+        'status'
     ];
     protected $casts = [
         'date' => 'date',
@@ -138,10 +143,26 @@ class Incident extends Model
     {
         return $this->belongsTo(Driver::class);
     }
+    public function state(){
+        return $this->belongsTo(States::class);
+    }
     public function files(){
         return $this->hasMany(IncidentFile::class);
     }
     public function claims(){
         return $this->hasMany(Claim::class);
+    }
+    public function truck(){
+        return $this->belongsTo(Vehicle::class,'truck_id','id')->where('type_id',1);
+    }
+    public function inspection_level(){
+        return $this->belongsTo(InspectionLevel::class);
+    }
+    public function assets(){
+        return $this->hasMany(Vehicle::class,'id','truck_id')->where('type_id',1)->orwhere('type_id',2);
+
+    }
+    public function violations(){
+        return $this->hasMany(IncidentViolation::class);
     }
 }

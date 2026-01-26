@@ -24,14 +24,14 @@ class GetDriverDetailRequest extends FormRequest
     {
         $categoryMap = [
             'application'=>['all'],
-            'notes' => ['manual', 'completed'],
-            'tasks' => ['onboarding', 'compliance', 'completed'],
+            'notes' => ['all'],
+            'tasks' => ['onboarding', 'compliance', 'manual','completed'],
             'documents' => ['1','2','3','4','5'],
             'drugandalcohol' => ['random_pool_membership','random_selection','drug_alcohol_test_history'],
             'clearinghouse' => ['compliance'],
             'employment' => ['internal','outgoing','incoming'],
-            'incidents' => ['accident','citations','inspections','clean','violations','claims','other_damage','other_incidents'],
-            'systemlog' => ['systemlog'],
+            'incidents' => ['all','accident','citations','inspections','clean','violations','claims','other_damage','other_incidents'],
+            'systemlog' => ['all'],
         ];
 
         return [

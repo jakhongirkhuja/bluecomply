@@ -66,6 +66,7 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
         Route::get('details/{id}', [CompanyDriverController::class, 'getDriverDetails']);
         Route::get('details/{id}/incidents/analytics', [CompanyDriverController::class, 'getDriverIncidentAnalytics']);
         Route::post('add-task', [CompanyDriverController::class, 'addTask']);
+        Route::delete('delete-task/{task_id}', [CompanyDriverController::class, 'deleteTask']);
         Route::post('assign-vehicle', [CompanyDriverController::class, 'assignVehicle']);
         Route::post('add-driver', [CompanyDriverController::class, 'addDriver']);
         Route::post('change-status', [CompanyDriverController::class, 'drivers_change_status']);
@@ -119,8 +120,17 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
 
 
     Route::prefix('safety')->group(function () {
-        Route::get('inspections', [SafetyController::class, 'getInspections']);
+        Route::get('inspections/roadside', [SafetyController::class, 'getInspections']);
+        Route::get('inspections/roadside/details/{incident_id}', [SafetyController::class, 'getInspectionDetails']);
         Route::get('inspections/count', [SafetyController::class, 'getInspectionCounts']);
+
+
+        Route::get('inspections/challenges', [SafetyController::class, 'getInspectionChallenges']);
+        Route::get('inspections/challenges/details/{challange_id}', [SafetyController::class, 'getInspectionChallengeDetails']);
+        Route::post('inspections/challenges/details', [SafetyController::class, 'getInspectionChallengeDetailStore']);
+
+
+
         Route::get('incidents', [SafetyController::class, 'getIncidents']);
         Route::get('incidents/count', [SafetyController::class, 'getIncidentCounts']);
         Route::get('claims', [SafetyController::class, 'getClaims']);

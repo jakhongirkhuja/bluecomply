@@ -86,7 +86,22 @@ class DriverService
             }
         } elseif ($data['category'] == 'incidents') {
 
-            $response['response'] = Incident::with('claims')->where('type', $data['under_category'])->where('driver_id', $driver->id)->paginate();
+            if($data['under_category']=='all'){
+                $response['response'] = Incident::withCount('claims')->where('driver_id', $driver->id)->paginate();
+
+            }else{
+
+                if($data['under_category']='clean' || $data['under_category']='violations'){
+                    $response['response'] = Incident::withCount('claims')->where('type', 'inspections')->where('status',$data['under_category'])->where('driver_id', $driver->id)->paginate();
+
+                }else{
+                    $response['response'] = Incident::withCount('claims')->where('type', $data['under_category'])->where('driver_id', $driver->id)->paginate();
+                }
+
+
+            }
+
+//            $response['response'] = Incident::with('claims')->where('type', $data['under_category'])->where('driver_id', $driver->id)->paginate();
         } elseif ($data['category'] == 'systemlog') {
             $response['response'] = ActivityLog::where('driver_id', $driver->id)->paginate();
 
@@ -116,18 +131,38 @@ class DriverService
             'other_incidents',
         ];
 
-        $counts = Incident::query()
+        $incidentData = Incident::query()
             ->where('company_id', $company_id)
-            ->select('type', DB::raw('count(*) as total'))
-            ->groupBy('type')
-            ->get()
-            ->pluck('total', 'type')
-            ->toArray();
+            ->where('driver_id', $driverId) // Added driver_id filter to match your loop logic
+            ->select('type', 'status', DB::raw('count(*) as total'))
+            ->groupBy('type', 'status')
+            ->get();
+
+        $counts = [];
+        foreach ($incidentData as $data) {
+            if ($data->type === 'inspections') {
+                // Create specific keys for clean/violations based on status
+                if ($data->status === 'clean') $counts['clean'] = $data->total;
+                if ($data->status === 'violations') $counts['violations'] = $data->total;
+
+                // Also keep the total inspections count
+                $counts['inspections'] = ($counts['inspections'] ?? 0) + $data->total;
+            } else {
+                $counts[$data->type] = $data->total;
+            }
+        }
+
         $result = [];
         foreach ($types as $type) {
+            if ($type === 'claims') {
+                $count = Claim::where('driver_id', $driverId)->count();
+            } else {
+                $count = $counts[$type] ?? 0;
+            }
+
             $result[] = [
                 'type' => $type,
-                'count' => $type == 'claims' ? Claim::where('driver_id', $driverId)->count() : $counts[$type] ?? 0,
+                'count' => $count,
             ];
         }
         return $result;

@@ -130,6 +130,7 @@
       <path value="$PROJECT_DIR$/src/vendor/sebastian/version" />
       <path value="$PROJECT_DIR$/src/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/src/vendor/laravel/sanctum" />
+      <path value="$PROJECT_DIR$/src/vendor/twilio/sdk" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

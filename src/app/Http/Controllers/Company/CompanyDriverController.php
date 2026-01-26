@@ -21,6 +21,8 @@ use App\Models\Driver\Vehicle;
 use App\Services\Company\DriverService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class CompanyDriverController extends Controller
@@ -154,7 +156,7 @@ class CompanyDriverController extends Controller
                 });
             })
 
-            ->latest()
+            ->latest('id')
             ->simplePaginate($per_page);
 //        $drivers = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($request, $company_id,$filter, $per_page, $search, $category) {
 //
@@ -247,6 +249,21 @@ class CompanyDriverController extends Controller
     public function addTask(StoreTaskRequest $request, $company_id)
     {
         return $this->safe(fn() => response()->success($this->service->addTask($request, $company_id),Response::HTTP_CREATED));
+
+    }
+    public function deleteTask($company_id, $task_id)
+    {
+        $task = Task::where('company_id', $company_id)->findOrFail($task_id);
+        return $this->safe(function() use ($task, $company_id){
+            return DB::transaction(function () use ($task) {
+                foreach ($task->attachments as $attachment) {
+                    Storage::disk('public')->delete($attachment->path);
+                }
+                $task->attachments()->delete();
+                $task->delete();
+                return response()->success($task,Response::HTTP_NO_CONTENT);
+            });
+        });
 
     }
     public function assignVehicle(AsignVehicleRequest $request, $company_id)

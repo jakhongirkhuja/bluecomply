@@ -12,6 +12,7 @@ use App\Http\Requests\Company\UpdateIncidentFileEditRequest;
 use App\Http\Requests\Company\UpdateOtherIncidentRequest;
 use App\Models\Company\Incident;
 use App\Models\Company\IncidentFile;
+use App\Models\Company\IncidentViolation;
 use App\Models\Driver\Driver;
 use App\Services\Company\IncidentService;
 use Illuminate\Http\Response;
@@ -72,11 +73,30 @@ class IncidentController extends Controller
             return response()->success($incident, Response::HTTP_OK);
         });
     }
-    public function createRoadsideInspection(StoreRoadSideInspectionRequest $request,Incident $incident){
+    public function createRoadsideInspection(StoreRoadSideInspectionRequest $request,$company_id, $incident){
+        $incident = Incident::where('company_id',$company_id)->where('id',$incident)->firstOrFail();
+
         $data = $request->validated();
         return $this->safe(function () use ($incident, $data) {
 
             if ($incident->type == 'inspections' && $incident->driver_id == $data['driver_id']) {
+
+
+
+                if($data['violations_exist']==1){
+
+                    $data['status'] = 'violations';
+
+                    foreach ($data['violations'] as $violation){
+                        $violation['incident_id'] = $incident->id;
+                        $violation['company_id'] = $incident->company_id;
+                        $violation['driver_id'] = $data['driver_id'];
+                        IncidentViolation::create($violation);
+                    }
+
+                }else{
+                    $data['status'] = 'clean';
+                }
 
                 $incident->update($data);
             }

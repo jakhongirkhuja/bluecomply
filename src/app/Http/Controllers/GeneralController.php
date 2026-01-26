@@ -43,6 +43,7 @@ class GeneralController extends Controller
             'rejection-reason',
             'violation-categories',
             'drug-test-reasons',
+            'inspection_levels',
             'vehicles',
             'vehicle_types',
             'roles',

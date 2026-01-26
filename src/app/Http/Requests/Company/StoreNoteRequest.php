@@ -25,7 +25,7 @@ class StoreNoteRequest extends FormRequest
             'title' => 'required|string|max:255',
             'user_id' => 'required|array',
             'user_id.*' => 'integer|exists:users,id',
-            'priority' => 'required|in:low,medium,high',
+            'priority' => 'nullable|in:low,medium,high',
             'show_at' => 'required|date|date_format:Y-m-d',
             'driver_id' => 'required|exists:drivers,id',
         ];

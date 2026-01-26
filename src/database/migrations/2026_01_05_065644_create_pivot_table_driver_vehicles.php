@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('driver_id');
             $table->unsignedBigInteger('vehicle_id');
-            $table->text('role'); // ['Truck', 'Trailer']
+            $table->text('role')->nullable();
             $table->date('assigned_at')->nullable();
             $table->date('unassigned_at')->nullable();
             $table->boolean('is_active')->default(true);
