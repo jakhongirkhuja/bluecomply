@@ -175,6 +175,7 @@ class DriverService
         $data['assigned_by'] = auth()->id();
         $data['category'] = 'manual';
         $data['company_id'] = $company_id;
+
         $task = Task::create($data);
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {

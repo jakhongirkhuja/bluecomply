@@ -29,7 +29,9 @@ class StoreTaskRequest extends FormRequest
             'related_id' => 'nullable|numeric|exists:users,id',
             'due_date' => 'required|date|date_format:Y-m-d',
             'priority' => 'required|in:low,medium,high,critical',
+            'related_vehicle_id'=>'nullable|numeric|exists:vehicles,id',
             'attachments'=>'nullable|array',
+
             'attachments.*' => 'file|max:10240|mimes:jpg,jpeg,png,pdf,doc,docx',
         ];
     }

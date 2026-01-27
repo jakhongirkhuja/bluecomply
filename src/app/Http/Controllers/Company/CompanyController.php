@@ -27,6 +27,12 @@ use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
+    public function getUsers($company_id){
+        $company  = Company::findorfail($company_id);
+        $data =  $company->users()->with('role')
+            ->get();
+        return response()->success($data);
+    }
     public function index(Request $request)
     {
         $request->validate([

@@ -156,6 +156,4 @@ class GeneralController extends Controller
     {
         return VehicleMaintenanceType::all();
     }
-
-
 }

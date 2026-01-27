@@ -2,6 +2,7 @@
 
 namespace App\Models\Company;
 
+use App\Models\Driver\Driver;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 
@@ -74,4 +75,8 @@ class Claim extends Model
     {
         return $this->hasMany(ClaimDocument::class);
     }
+    public function driver(){
+        return $this->belongsTo(Driver::class);
+    }
+
 }

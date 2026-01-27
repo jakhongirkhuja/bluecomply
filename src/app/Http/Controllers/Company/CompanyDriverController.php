@@ -93,6 +93,17 @@ class CompanyDriverController extends Controller
         return $this->safe(fn() => response()->success(SavedFilter::where('company_id', $company_id)->where('id', $id)->update($request->validated()),Response::HTTP_CREATED));
 
     }
+    public function getDriverVehicle($company_id,$driver_id)
+    {
+        $vehicles = Vehicle::where('company_id', $company_id)
+            ->where('type_id', request()->type_id)
+            ->whereHas('drivers', function ($q) use ($driver_id) {
+                $q->where('drivers.id', $driver_id);
+            })
+            ->get();
+
+        return response()->success($vehicles);
+    }
     public function getDrivers(GetStatusRequest $request,$company_id){
 
         $filter = $request->filter ?? 'all';

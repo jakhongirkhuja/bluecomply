@@ -165,4 +165,7 @@ class Incident extends Model
     public function violations(){
         return $this->hasMany(IncidentViolation::class);
     }
+    public function agency(){
+        return $this->belongsTo(Agency::class,'issuing_agency_id');
+    }
 }

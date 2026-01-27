@@ -27,7 +27,7 @@ class StoreClaimRequest extends FormRequest
             'claims' => ['required', 'array', 'min:1'],
             'claims.*.type' => [
                 'required',
-                'in:Liability,Physical Damage,Cargo,Subrogation,Trailer Interchange,Other'
+                'in:liability,physical damage,cargo,subrogation,trailer interchange,other'
             ],
             'claims.*.other_type' => [
                 'required_if:claims.*.type,Other',
@@ -41,7 +41,7 @@ class StoreClaimRequest extends FormRequest
             'claims.*.adjuster_contact'  => ['required', 'string', 'max:150'],
             'claims.*.status' => [
                 'required',
-                'in:Open,Reviewing,Paid,Denied,Closed'
+                'in:open,reviewing,paid,denied,closed'
             ],
             'claims.*.deductible_amount' => ['required', 'numeric', 'min:0'],
             'claims.*.insurance_paid'    => ['required', 'numeric', 'min:0'],

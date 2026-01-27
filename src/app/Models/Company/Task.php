@@ -20,6 +20,7 @@ class Task extends Model
         'related_id',
         'due_date',
         'priority',
+        'related_vehicle_id'
     ];
     protected $casts = [
         'driver_id' => 'integer',

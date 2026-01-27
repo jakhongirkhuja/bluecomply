@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('incident_files', function (Blueprint $table) {
+        Schema::create('dataq_challenge_documents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('incident_id');
-            $table->string('type')->nullable(); //corrections
+            $table->unsignedBigInteger('dataq_challenge_id');
+            $table->unsignedBigInteger('company_id');
             $table->string('file_name');
             $table->string('file_path')->unique();
             $table->unsignedInteger('file_size');
             $table->string('mime_type');
-            $table->unsignedBigInteger('uploaded_by')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('incident_files');
+        Schema::dropIfExists('challenge_documents');
     }
 };

@@ -117,7 +117,7 @@ class IncidentController extends Controller
         }
     }
 
-    public function update(StoreIncidentDetailRequest $request, Incident $incident)
+    public function update(StoreIncidentDetailRequest $request, $company_id,Incident $incident)
     {
         $data = $request->validated();
         Driver::where('id', $data['driver_id'])->whereHas('company', fn($q) => $q->where('user_id', auth()->id()))->firstOrFail();

@@ -12,5 +12,14 @@ class IncidentFile extends Model
         'file_path',
         'file_size',
         'mime_type',
+        'uploaded_by',
     ];
+    protected static function booted()
+    {
+        static::creating(function ($file) {
+            if (auth()->check()) {
+                $file->uploaded_by = auth()->id();
+            }
+        });
+    }
 }

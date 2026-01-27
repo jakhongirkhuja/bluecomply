@@ -20,6 +20,7 @@ use App\Http\Controllers\Company\NotificationController;
 use App\Http\Controllers\Company\MessageController;
 use App\Http\Controllers\Company\FleetController;
 use App\Http\Controllers\Company\SafetyController;
+use App\Http\Controllers\Company\DataqChallengeController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -34,14 +35,15 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
     Route::apiResource('drug-tests', DrugTestController::class)->only(['store', 'destroy']);
     Route::apiResource('driver-terminations', DriverTerminationController::class)->only(['store', 'destroy']);
     Route::apiResource('notes', NoteController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('challenges', DataqChallengeController::class)->only(['index','show','store', 'destroy']);;
 
-
+    Route::get('users', [CompanyController::class, 'getUsers']);
 
 
     Route::prefix('drivers')->group(function () {
         Route::get('', [CompanyDriverController::class, 'getDrivers']);
         Route::get('count', [CompanyDriverController::class, 'countDrivers']);
-
+        Route::get('vehicles/{driver_id}', [CompanyDriverController::class, 'getDriverVehicle']);
         Route::get('save-filters', [CompanyDriverController::class, 'saveFilterList']);
         Route::post('save-filters', [CompanyDriverController::class, 'saveFilter']);
         Route::delete('save-filters/{id}', [CompanyDriverController::class, 'saveFilterDelete']);
@@ -127,16 +129,25 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
 
         Route::get('inspections/challenges', [SafetyController::class, 'getInspectionChallenges']);
         Route::get('inspections/challenges/details/{challange_id}', [SafetyController::class, 'getInspectionChallengeDetails']);
-        Route::post('inspections/challenges/details', [SafetyController::class, 'getInspectionChallengeDetailStore']);
-
 
 
         Route::get('incidents', [SafetyController::class, 'getIncidents']);
         Route::get('incidents/count', [SafetyController::class, 'getIncidentCounts']);
+        Route::get('incidents/details/{incident_id}', [SafetyController::class, 'getIncidentDetails']);
+
+        Route::delete('incidents/delete/{incident_id}', [SafetyController::class, 'deleteIncidentDetails']);
+        Route::delete('incidents/delete/{incident_id}/evidence/{evidence_id}', [SafetyController::class, 'deleteIncidentEvidence']);
+
         Route::get('claims', [SafetyController::class, 'getClaims']);
         Route::get('claims/count', [SafetyController::class, 'getClaimCounts']);
-        Route::get('citations', [SafetyController::class, 'getCitations']);
+        Route::get('claims/details/{claim_id}', [SafetyController::class, 'getClaimsDetails']);
 
+        Route::post('claims/change-status/{claim_id}', [SafetyController::class, 'claimsChangeStatus']);
+        Route::delete('claims/delete/{claim_id}/evidence/{evidence_id}', [SafetyController::class, 'deleteClaimEvidence']);
+
+
+
+        Route::get('citations', [SafetyController::class, 'getCitations']);
 
 
     });

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('category', ['onboarding','compliance','manual', 'completed'])->default('manual');
             $table->enum('status', ['pending', 'in_progress','completed'])->default('pending');
             $table->unsignedBigInteger('related_type')->nullable();
+            $table->unsignedBigInteger('related_vehicle_id')->nullable();
             $table->unsignedBigInteger('related_id')->nullable();
             $table->date('due_date')->nullable();
             $table->unsignedBigInteger('company_id')->nullable();

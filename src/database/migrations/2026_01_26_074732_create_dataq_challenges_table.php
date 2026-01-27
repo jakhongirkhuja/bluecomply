@@ -15,19 +15,16 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('company_id');
             $table->string('request_id')->unique()->comment('RQ123456789');
-            $table->string('status'); // Pending, Resolved, Denied
+            $table->string('status')->default('pending'); // Pending, Resolved, Denied
+            $table->unsignedBigInteger('incident_id')->nullable();
+            $table->unsignedBigInteger('inspection_id')->nullable();
+            $table->unsignedBigInteger('driver_id')->nullable();
+            $table->unsignedBigInteger('vehicle_id')->nullable();
 
-            $table->foreignId('incident_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('accident_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('driver_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('truck_id')->nullable()->constrained()->onDelete('set null');
-
-            // Поля для "Add Manually" (если записи нет в системе)
             $table->string('report_number')->nullable();
             $table->string('state_id')->nullable();
             $table->string('manual_equipment_unit')->nullable();
 
-            // Тип и категория челленджа
             $table->unsignedBigInteger('type_id');
             $table->unsignedBigInteger('category_id');
 
