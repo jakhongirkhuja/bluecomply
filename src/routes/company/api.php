@@ -20,7 +20,9 @@ use App\Http\Controllers\Company\NotificationController;
 use App\Http\Controllers\Company\MessageController;
 use App\Http\Controllers\Company\FleetController;
 use App\Http\Controllers\Company\SafetyController;
+use App\Http\Controllers\Company\DocumentController;
 use App\Http\Controllers\Company\DataqChallengeController;
+use App\Http\Controllers\Company\SettingController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -145,12 +147,27 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
         Route::post('claims/change-status/{claim_id}', [SafetyController::class, 'claimsChangeStatus']);
         Route::delete('claims/delete/{claim_id}/evidence/{evidence_id}', [SafetyController::class, 'deleteClaimEvidence']);
 
-
-
         Route::get('citations', [SafetyController::class, 'getCitations']);
-
+        Route::get('citations/details/{citation_id}', [SafetyController::class, 'getCitationDetails']);
+        Route::post('citations/details/{citation_id}/status-change', [SafetyController::class, 'citationStatusChange']);
 
     });
+
+    Route::prefix('document')->group(function () {
+        Route::get('', [DocumentController::class, 'getDocuments']);
+        Route::delete('delete/{id}', [DocumentController::class, 'deleteDocuments']);
+        Route::post('upload', [DocumentController::class, 'uploadDocument']);
+        Route::post('assign-to-asset', [DocumentController::class, 'assignToAsset']);
+    });
+
+    Route::prefix('settings')->group(function () {
+        Route::get('user', [SettingController::class, 'getUserInformation']);
+        Route::post('user', [SettingController::class, 'postUserInformation']);
+
+        Route::get('logout-all', [SettingController::class, 'logoutall']);
+        Route::get('delete-account', [SettingController::class, 'deleteAccount']);
+    });
+
 
 });
 

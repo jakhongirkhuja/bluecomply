@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Company\Role;
+use App\Models\Company\UserApiSession;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -65,5 +66,9 @@ class User extends Authenticatable
     public function hasRole(string $slug): bool
     {
         return $this->roles()->where('slug', $slug)->exists();
+    }
+    public function apiSessions()
+    {
+        return $this->hasMany(UserApiSession::class);
     }
 }

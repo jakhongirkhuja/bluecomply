@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\Company\Company;
+use App\Models\Company\UserApiSession;
 use App\Models\Driver\Driver;
 use App\Models\Driver\EmploymentPeriod;
 use App\Models\Driver\LinkVerification;
@@ -72,6 +73,19 @@ class AuthService
                         $d['email'] = $user->email;
                         $d['name'] = $user->name;
                         $d['company'] = Company::select('id','company_name','tenet_id')->where('user_id', $user->id)->first();
+
+
+                        $device = request()->header('User-Agent');
+//                        $location = get_location_from_ip(request()->ip()); // optional
+
+                        UserApiSession::create([
+                            'user_id' => $user->id,
+                            'device' => $device,
+                            'location' => '',
+                            'login_at' => now(),
+                            'last_active_at' => now(),
+                            'token_id' => $token->id,
+                        ]);
                         return $d;
                     })
                 ]);

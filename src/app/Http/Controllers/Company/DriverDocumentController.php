@@ -72,7 +72,7 @@ class DriverDocumentController extends Controller
         return match ($data['document_type_id']) {
             '1' => $this->postmaindocs($data,$request,$document,$company_id),
             '2' => $this->postmaindocs($data,$request,$document,$company_id),
-            '3' => $this->postotherdocs($data,$request,$document,$company_id),
+            '3' => $this->postmaindocs($data,$request,$document,$company_id),
             '4' => $this->postmaindocs($data,$request,$document,$company_id),
             '5' => $this->postotherdocs($data,$request,$document,$company_id),
             '6' => $this->postotherdocs($data,$request,$document,$company_id),
@@ -114,7 +114,7 @@ class DriverDocumentController extends Controller
     {
 
         $validate = $request->validate([
-            //            'state_id' => 'required|exists:states,id',
+
             'class_id' => [
                 'sometimes',
                 'exists:cdlclasses,id',
@@ -126,6 +126,7 @@ class DriverDocumentController extends Controller
             ],
             'number' => 'required|string|max:150',
             'issue_at' => 'nullable|date_format:Y-m-d',
+            'state_id'=>'required|exists:states,id',
             'expires_at' => 'required|date_format:Y-m-d|after_or_equal:issue_at',
             'endorsements' => [
                 'sometimes',
@@ -165,7 +166,6 @@ class DriverDocumentController extends Controller
             'files_back.*' => ['file','mimes:pdf,png,jpg,jpeg','max:10048'],
         ]);
 
-        $validate['state_id'] = 1;
         return $this->safe(fn () =>response()->success($this->service->postmaindocs($data,$validate, $document, $company_id),Response::HTTP_CREATED));
     }
     public function destroy(Document $driverDocument)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangeClaimStatusRequest;
+use App\Http\Requests\Company\IncidentStatusChangeRequest;
 use App\Models\Company\Claim;
 use App\Models\Company\ClaimDocument;
 use App\Models\Company\DataqChallenge;
@@ -274,9 +275,10 @@ class SafetyController extends Controller
             return response()->error('Invalid type');
         }
         if ($type=='evidence'){
-            $response=Claim::with(['driver','incident'])->findOrFail($claim_id);
-        }else{
             $response = ClaimDocument::select('file_name','file_size')->where('claim_id',$claim_id)->latest()->get();
+
+        }else{
+            $response=Claim::with(['driver','incident'])->findOrFail($claim_id);
         }
         return response()->success($response);
     }
@@ -308,22 +310,47 @@ class SafetyController extends Controller
         }
     }
 
-    public function getCitations($company_id){
+    public function getCitations(Request $request, $company_id){
         $per_page = $request->per_page ?? 100;
 
         $search = $request->get('search');
 
         $incident = Incident::with(['driver',  'violations','truck','agency'])
             ->where('company_id', $company_id)
-            ->where('type','citation')
+            ->where('type','citations')
 
             ->when($search, function ($query) use ($search) {
                 return $query->where(function ($query) use ($search) {
-                    $query->where('identifier', 'like', '%' . $search . '%')->orWhere('report_number', 'like', '%' . $search . '%');
+                    $query->where('identifier', 'like', '%' . $search . '%');
                 });
             })
             ->simplePaginate($per_page);
 
         return response()->success($incident);
+    }
+    public function getCitationDetails(Request $request, $company_id, $citation_id){
+        $type = $request->type;
+        $allowedTypes =['details','evidence'];
+        if(!in_array($type,$allowedTypes)){
+            return response()->error('Invalid type');
+        }
+        if ($type=='evidence'){
+            $response=IncidentFile::where('incident_id',$citation_id)->get();
+        }else{
+            $response = Incident::with(['driver','violations','truck','agency'])->where('company_id', $company_id)
+                ->where('type','citations')->findOrFail($citation_id);
+        }
+        return response()->success($response);
+    }
+    public function citationStatusChange(IncidentStatusChangeRequest $request, $company_id, $citation_id)
+    {
+        try {
+            $incident = Incident::where('company_id', $company_id)->where('id', $citation_id)->firstorfail();
+            $incident->update($request->validated());
+            return response()->sucess($incident);
+        }catch (\Exception $e){
+            Log::error($e->getMessage());
+            return response()->error('Something went wrong');
+        }
     }
 }

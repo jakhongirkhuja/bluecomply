@@ -4,7 +4,9 @@ namespace App\Models\Company;
 
 use App\Models\Driver\Driver;
 use App\Models\User;
+use App\Services\Company\GlobalDocumentService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Document extends Model
 {
@@ -33,4 +35,56 @@ class Document extends Model
     public function driver() {
         return $this->belongsTo(Driver::class);
     }
+
+    protected static function booted()
+    {
+        static::created(function (Document $document) {
+            $driver = $document->driver;
+            if (auth()->guard('driver')->check()) {
+                $uploaded_by_table_name = 'driver';
+            } elseif (auth()->check()) {
+                $uploaded_by_table_name = 'users';
+            }
+            app(GlobalDocumentService::class)->sync(
+                $document,
+                [
+                    'company_id' => $driver->company_id,
+                    'category'   => 'Driver',
+                    'type'       => $document->type->name,
+                    'name'       =>$driver->first_name.' - '.$document->type->name,
+                    'related_to' => $driver->first_name.' '.$driver->last_name,
+                    'expiration' => $document->expires_at,
+                    'uploaded_by_id'=> auth()->id(),
+                    'uploaded_by_table_name'=>$uploaded_by_table_name
+                ]
+            );
+        });
+
+        static::updated(function (Document $document) {
+            $driver = $document->driver;
+            if (auth()->guard('driver')->check()) {
+                $uploaded_by_table_name = 'driver';
+            } elseif (auth()->check()) {
+                $uploaded_by_table_name = 'users';
+            }
+            app(GlobalDocumentService::class)->sync(
+                $document,
+                [
+                    'company_id' => $driver->company_id,
+                    'category'   => 'Driver',
+                    'type'       => $document->type->name,
+                    'name'       =>$driver->first_name.' - '.$document->type->name,
+                    'related_to' => $driver->first_name.' '.$driver->last_name,
+                    'expiration' => $document->expires_at,
+                    'uploaded_by_id'=> auth()->id(),
+                    'uploaded_by_table_name'=>$uploaded_by_table_name
+                ]
+            );
+        });
+
+        static::deleted(function (Document $document) {
+            app(GlobalDocumentService::class)->delete($document);
+        });
+    }
+
 }

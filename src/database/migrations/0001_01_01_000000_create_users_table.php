@@ -24,6 +24,15 @@ return new class extends Migration
             $table->string('rand_number')->nullable();
             $table->timestamp('phone_confirm_at')->nullable();
             $table->timestamp('phone_confirm_sent')->nullable();
+
+            $table->text('address')->nullable();
+            $table->text('city')->nullable();
+            $table->text('state_id')->nullable();
+            $table->text('zip_code')->nullable();
+
+            $table->boolean('sms_2fa_enabled')->default(false);
+            $table->boolean('totp_enabled')->default(false);
+
             $table->rememberToken();
             $table->timestamps();
         });

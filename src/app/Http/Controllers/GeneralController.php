@@ -13,6 +13,7 @@ use App\Models\Company\Role;
 use App\Models\Company\ViolationCategory;
 use App\Models\Driver\Vehicle;
 use App\Models\General\Cities;
+use App\Models\General\ComplianceCategory;
 use App\Models\General\DamageCategory;
 use App\Models\General\EndorsementType;
 use App\Models\General\EquipmentType;
@@ -50,6 +51,7 @@ class GeneralController extends Controller
             'vehicle_document_types',
             'vehicle_insurance_types',
             'vehicle_maintenance_types',
+            'compliance_category'
         ];
 
         if (!in_array($type, $allowed)) {
@@ -155,5 +157,8 @@ class GeneralController extends Controller
     private function vehicleMaintenanceTypes()
     {
         return VehicleMaintenanceType::all();
+    }
+    private function complianceCategory(){
+        return ComplianceCategory::all();
     }
 }

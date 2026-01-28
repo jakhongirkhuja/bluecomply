@@ -64,13 +64,9 @@ class DriverService
 
         } elseif ($data['category'] == 'notes') {
             $notes = Note::where('driver_id', $driver->id)
-                ->whereDate('show_at', Carbon::today())
                 ->orderBy('show_at', 'desc')
                 ->paginate();
-            $notes->getCollection()->transform(function ($note) {
-                $note->assigned_users = $note->users(); // adds 'assigned_users' property
-                return $note;
-            });
+
 
             $response = $notes;
         } elseif ($data['category'] == 'documents') {

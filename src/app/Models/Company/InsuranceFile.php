@@ -4,10 +4,11 @@ namespace App\Models\Company;
 
 use Illuminate\Database\Eloquent\Model;
 
-class IncidentFile extends Model
+class InsuranceFile extends Model
 {
     protected $fillable = [
-        'type',
+        'company_id',
+        'insurance_id',
         'file_name',
         'file_path',
         'file_size',
@@ -21,7 +22,6 @@ class IncidentFile extends Model
                 $file->uploaded_by = auth()->id();
             }
         });
-
 
     }
 }

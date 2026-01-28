@@ -16,7 +16,11 @@ class VehicleInsuranceTypeSeeder extends Seeder
         $types = [
             'Commercial Auto Policy',
             'Liability Insurance',
+            'Physical Damage',
             'Cargo Insurance',
+            'Trailer Interchange',
+            'Cyber',
+            'Other',
         ];
 
         foreach ($types as $type) {
