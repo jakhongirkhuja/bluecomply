@@ -23,6 +23,7 @@ use App\Http\Controllers\Company\SafetyController;
 use App\Http\Controllers\Company\DocumentController;
 use App\Http\Controllers\Company\DataqChallengeController;
 use App\Http\Controllers\Company\SettingController;
+use App\Http\Controllers\Company\EmploymentMenuController;
 Route::get('general', [GeneralController::class, 'getData']);
 
 
@@ -163,9 +164,22 @@ Route::prefix('v1/company/{company_id}')->middleware(['auth:sanctum'])->group(fu
     Route::prefix('settings')->group(function () {
         Route::get('user', [SettingController::class, 'getUserInformation']);
         Route::post('user', [SettingController::class, 'postUserInformation']);
-
+        Route::post('der_information', [SettingController::class, 'postDerInformation']);
         Route::get('logout-all', [SettingController::class, 'logoutall']);
         Route::get('delete-account', [SettingController::class, 'deleteAccount']);
+        Route::post('save-notification', [SettingController::class, 'saveNotificationSettings']);
+
+
+        Route::get('mvr/drivers', [SettingController::class, 'mvrGetDrivers']);
+        Route::post('mvr/drivers', [SettingController::class, 'mvrPostDrivers']);
+
+        Route::post('general', [SettingController::class, 'generalSettings']);
+        Route::get('link', [SettingController::class, 'linkView']);
+
+    });
+
+    Route::prefix('employments')->group(function () {
+        Route::get('', [EmploymentMenuController::class, 'getEmployments']);
     });
 
 

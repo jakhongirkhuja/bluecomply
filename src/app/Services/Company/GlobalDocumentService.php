@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class GlobalDocumentService
 {
     public function sync(Model $source,array $data = [] ): GlobalDocument {
+
+//        dd($source,$data);
         return GlobalDocument::updateOrCreate(
             [
                 'source_table' => $source->getTable(),
@@ -20,6 +22,7 @@ class GlobalDocumentService
     protected function mapData(Model $source, array $data): array
     {
         return [
+            'company_id'=>$data['company_id'],
             // system / derived
             'expiration'  => $data['expiration'] ?? null,
             'upload_date' => $data['upload_date'] ?? now()->toDateString(),

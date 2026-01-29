@@ -4,6 +4,8 @@ namespace App\Services\Company;
 
 use App\Models\Company\Document;
 use App\Models\Company\DocumentType;
+use App\Models\Company\Restriction;
+use App\Models\Driver\Endorsement;
 use App\Models\Driver\LicenseDetail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -86,8 +88,22 @@ class DriverDocumentService
                     $this->storeFiles($document, $validate['files']);
                 }
             }
+            if(isset($validate['endorsements'])){
+                $endorsements = Endorsement::create([
+                    'driver_id' => $data['driver_id'],
+                    'endorsements' => $validate['endorsements'],
+                ]);
+            }
 
-
+            if(isset($validate['restrictions'])){
+                foreach ($validate['restrictions'] as $restriction) {
+                     Restriction::create([
+                        'driver_id' => $data['driver_id'],
+                        'restriction_type_id'=>$restriction,
+                        'company_id' => $company_id,
+                    ]);
+                }
+            }
 
             return $document;
         });

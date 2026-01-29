@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('token_id')->nullable()->index();
             $table->timestamp('login_at')->nullable();
             $table->timestamp('last_active_at')->nullable();
+            $table->text('ip')->nullable();
             $table->timestamps();
         });
     }

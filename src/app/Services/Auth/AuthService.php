@@ -58,7 +58,8 @@ class AuthService
                 && $user->phone_confirm_sent
                 && $user->phone_confirm_sent->greaterThan(now()->subMinutes(5));
 
-            if ($codeValid) {
+            if ($codeValid && $user) {
+
                 return response()->success([
                     'token' => DB::transaction(function () use ($user, $data) {
 
@@ -67,8 +68,12 @@ class AuthService
                             'phone_confirm_sent' => null,
                             'hired_at' => now(),
                         ]);
-                        $token = $user->createToken('driver-token')->plainTextToken;
-                        $d['token'] = $token;
+
+
+                        $tokenObj = $user->createToken('driver-token');
+                        $plainToken = $tokenObj->plainTextToken;
+                        $tokenId = $tokenObj->accessToken->id;
+                        $d['token'] = $plainToken;
                         $d['role_id'] = $user->role_id;
                         $d['email'] = $user->email;
                         $d['name'] = $user->name;
@@ -76,15 +81,14 @@ class AuthService
 
 
                         $device = request()->header('User-Agent');
-//                        $location = get_location_from_ip(request()->ip()); // optional
-
                         UserApiSession::create([
                             'user_id' => $user->id,
                             'device' => $device,
                             'location' => '',
                             'login_at' => now(),
                             'last_active_at' => now(),
-                            'token_id' => $token->id,
+                            'token_id' => $tokenId,
+                            'ip'=>request()->ip(),
                         ]);
                         return $d;
                     })

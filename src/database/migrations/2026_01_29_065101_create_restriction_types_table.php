@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('endorsements', function (Blueprint $table) {
+        Schema::create('restriction_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id')->nullable();
-            $table->unsignedBigInteger('driver_id');
-            $table->json('endorsements')->nullable();
-            $table->string('twic_card_path')->nullable();
+            $table->string('code', 5)->unique();
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('endorsements');
+        Schema::dropIfExists('restriction_types');
     }
 };

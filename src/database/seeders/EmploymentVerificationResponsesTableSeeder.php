@@ -16,17 +16,17 @@ class EmploymentVerificationResponsesTableSeeder extends Seeder
     public function run(): void
     {
         $drivers = Driver::all();
-        $company = Company::first();
+
 
         foreach ($drivers as $driver) {
             // Outgoing verification
             $verification1 = EmploymentVerification::create([
                 'driver_id' => $driver->id,
-                'company_id' => $company->id,
+                'company_id' => 2,
                 'direction' => 'outgoing',
                 'method' => 'email',
                 'status' => 'pending',
-                'created_by_company'=>$company->id,
+                'created_by_company'=>2,
                 'created_by' => 1,
             ]);
 //

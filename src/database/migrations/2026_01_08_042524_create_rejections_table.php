@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('driver_id');
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('rejection_reason_id');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

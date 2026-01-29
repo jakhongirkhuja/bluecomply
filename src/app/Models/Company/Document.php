@@ -45,10 +45,11 @@ class Document extends Model
             } elseif (auth()->check()) {
                 $uploaded_by_table_name = 'users';
             }
+
             app(GlobalDocumentService::class)->sync(
                 $document,
                 [
-                    'company_id' => $driver->company_id,
+                    'company_id' => $document->company_id,
                     'category'   => 'Driver',
                     'type'       => $document->type->name,
                     'name'       =>$driver->first_name.' - '.$document->type->name,
@@ -58,6 +59,7 @@ class Document extends Model
                     'uploaded_by_table_name'=>$uploaded_by_table_name
                 ]
             );
+
         });
 
         static::updated(function (Document $document) {
@@ -70,7 +72,7 @@ class Document extends Model
             app(GlobalDocumentService::class)->sync(
                 $document,
                 [
-                    'company_id' => $driver->company_id,
+                    'company_id' => $document->company_id,
                     'category'   => 'Driver',
                     'type'       => $document->type->name,
                     'name'       =>$driver->first_name.' - '.$document->type->name,

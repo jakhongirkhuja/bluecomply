@@ -33,6 +33,13 @@ return new class extends Migration
             $table->boolean('sms_2fa_enabled')->default(false);
             $table->boolean('totp_enabled')->default(false);
 
+            $table->text('signature')->nullable();
+            $table->string('language')->default('en');
+            $table->string('appearance')->default('auto');
+            $table->string('time_zone')->default('UTC');
+            $table->string('date_format')->default('mm/dd/yyyy');
+            $table->integer('time_format')->default('12');
+
             $table->rememberToken();
             $table->timestamps();
         });

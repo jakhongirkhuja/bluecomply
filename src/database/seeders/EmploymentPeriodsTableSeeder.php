@@ -16,13 +16,13 @@ class EmploymentPeriodsTableSeeder extends Seeder
     public function run(): void
     {
         $drivers = Driver::all();
-        $company = Company::first();
+
 
         foreach ($drivers as $driver) {
 
             EmploymentPeriod::create([
                 'driver_id' => $driver->id,
-                'company_id' => $company->id,
+                'company_id' => 2,
                 'start_date' => now()->subYears(2),
                 'end_date' => null,
                 'status' => 'active',
@@ -32,7 +32,7 @@ class EmploymentPeriodsTableSeeder extends Seeder
 
             EmploymentPeriod::create([
                 'driver_id' => $driver->id,
-                'company_id' => $company->id,
+                'company_id' =>3,
                 'start_date' => now()->subYears(4),
                 'end_date' => now()->subYears(2)->subDays(1),
                 'status' => 'terminated',

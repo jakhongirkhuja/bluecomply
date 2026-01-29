@@ -15,7 +15,7 @@ class EmploymentVerificationService
 
             $employmentPayload =[
                 'driver_id' => $data['driver_id'],
-                'company_id' => $company_id,
+                'company_id' =>$data['company_id'],
                 'direction'=> $data['direction'],
                 'method' => $data['method']??null,
                 'status' => 'pending',

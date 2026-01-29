@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             VehicleMaintenanceTypeSeeder::class,
             ChallengeType::class,
             ComplianceCategorySeeder::class,
+            RestrictionsSeeder::class,
             ChallengeCategory::class,
             PlanSeeder::class,
             RejectionReasonsSeeder::class,

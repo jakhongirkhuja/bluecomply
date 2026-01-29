@@ -63,4 +63,20 @@ class RegistrationLink extends Model
     public function company(){
         return $this->belongsTo(Company::class);
     }
+    public function activity(){
+        return $this->hasMany(RegistrationLinkActivity::class);
+    }
+    public function latestView()
+    {
+        return $this->hasOne(RegistrationLinkActivity::class)
+            ->whereNotNull('viewed_at')
+            ->latest('viewed_at');
+    }
+
+    public function latestStart()
+    {
+        return $this->hasOne(RegistrationLinkActivity::class)
+            ->whereNotNull('started_at')
+            ->latest('started_at');
+    }
 }

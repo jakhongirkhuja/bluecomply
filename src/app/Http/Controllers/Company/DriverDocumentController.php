@@ -138,16 +138,18 @@ class DriverDocumentController extends Controller
                 }
             ],
             'endorsements.*' => 'string',
-            'current'=>'required|numeric|between:0,1',
-            'side' => [
+            'restrictions' =>[
                 'sometimes',
+                'array',
                 function ($attribute, $value, $fail) use ($data) {
-                    if (in_array($data['document_type_id'], ['1','2']) && !$value) {
-                        $fail("The $attribute field is required for document types 1, 2.");
+                    if (in_array($data['document_type_id'], ['1','2']) && empty($value)) {
+                        $fail("The $attribute field is required for document types 1, 2");
                     }
-                },
-                'in:front,back'
+                }
             ],
+            'restrictions.*' => 'numeric|exists:restriction_types,id',
+            'current'=>'required|numeric|between:0,1',
+            'side' => 'nullable',
             'files' => [
                 in_array($data['document_type_id'], ['4','5']) ? 'required' : 'nullable',
                 'array'

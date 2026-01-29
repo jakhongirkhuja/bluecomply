@@ -31,6 +31,18 @@ class User extends Authenticatable
         'rand_number',
         'phone_confirm_at',
         'phone_confirm_sent',
+        'address',
+        'city',
+        'state_id',
+        'zip_code',
+        'sms_2fa_enabled',
+        'totp_enabled',
+        'appearance',
+        'time_zone',
+        'language',
+        'date_format',
+        'time_format',
+        'signature',
     ];
 
 
@@ -42,6 +54,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+
     ];
 
     /**
@@ -55,7 +68,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'date_of_birth' => 'date',
+            'sms_2fa_enabled'=>'boolean',
+            'totp_enabled'=>'boolean',
             'phone_confirm_sent' => 'datetime',
+            'time_format' => 'integer',
         ];
     }
     public function role()

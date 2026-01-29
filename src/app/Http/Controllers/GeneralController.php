@@ -17,6 +17,7 @@ use App\Models\General\ComplianceCategory;
 use App\Models\General\DamageCategory;
 use App\Models\General\EndorsementType;
 use App\Models\General\EquipmentType;
+use App\Models\General\RestrictionType;
 use App\Models\General\States;
 use App\Models\General\VehicleDocumentType;
 use App\Models\General\VehicleInsuranceType;
@@ -51,7 +52,8 @@ class GeneralController extends Controller
             'vehicle_document_types',
             'vehicle_insurance_types',
             'vehicle_maintenance_types',
-            'compliance_category'
+            'compliance_category',
+            'restriction_types'
         ];
 
         if (!in_array($type, $allowed)) {
@@ -160,5 +162,8 @@ class GeneralController extends Controller
     }
     private function complianceCategory(){
         return ComplianceCategory::all();
+    }
+    private function restrictionTypes(){
+        return RestrictionType::all();
     }
 }

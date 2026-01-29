@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ChangeClaimStatusRequest;
+use App\Http\Requests\Company\ChangeClaimStatusRequest;
 use App\Http\Requests\Company\IncidentStatusChangeRequest;
 use App\Models\Company\Claim;
 use App\Models\Company\ClaimDocument;
@@ -11,7 +11,6 @@ use App\Models\Company\DataqChallenge;
 use App\Models\Company\Incident;
 use App\Models\Company\IncidentFile;
 use App\Models\Company\IncidentViolation;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

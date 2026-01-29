@@ -23,7 +23,7 @@ class LoginConfirmRequest extends FormRequest
     {
         return [
             'primary_phone'=>'required|string|exists:users,phone',
-            'rand_number'=>'required|numeric|exists:users,rand_number',
+            'rand_number'=>'required|numeric',
         ];
     }
 }

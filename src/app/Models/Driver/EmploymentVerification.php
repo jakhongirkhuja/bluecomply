@@ -37,7 +37,10 @@ class EmploymentVerification extends Model
     {
         return $this->belongsTo(Company::class);
     }
-
+    public function companyby()
+    {
+        return $this->belongsTo(Company::class, 'created_by_company');
+    }
     public function events()
     {
         return $this->hasMany(EmploymentVerificationEvent::class);

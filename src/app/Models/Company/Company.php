@@ -36,6 +36,9 @@ class Company extends Model
         'drug_alcohol_testing',
         'mvr_ordering',
         'bulk_driver_import',
+        'der_last_name',
+        'der_address',
+        'der_alternative_phone'
     ];
 
     protected $casts = [

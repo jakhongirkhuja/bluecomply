@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('endorsements', function (Blueprint $table) {
+        Schema::create('mvr_monitorings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id')->nullable();
             $table->unsignedBigInteger('driver_id');
-            $table->json('endorsements')->nullable();
-            $table->string('twic_card_path')->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->boolean('enrolled')->default(false);
+            $table->decimal('monthly_cost', 8, 2)->default(1.75);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('endorsements');
+        Schema::dropIfExists('mvr_monitorings');
     }
 };

@@ -20,8 +20,11 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->text('status')->default('active');
             $table->string('der_name')->nullable();
+            $table->string('der_last_name')->nullable();
             $table->string('der_email')->nullable();
             $table->string('der_phone')->nullable();
+            $table->string('der_address')->nullable();
+            $table->string('der_alternative_phone')->nullable();
             $table->timestamp('last_active')->nullable();
             $table->text('notes')->nullable();
             $table->unsignedBigInteger('plan_id')->nullable();
